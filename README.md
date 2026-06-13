@@ -28,6 +28,16 @@ SpendWise is a privacy-first expense tracker that works the way Indian users act
 - Seed list of 50+ Indian merchants pre-categorised (Swiggy, Zomato, Ola, IRCTC, Zepto, etc.)
 - Supports HDFC, SBI, ICICI, Axis, GPay, Paytm statement formats
 
+### ✅ Phase 2 — SMS Auto-Import (Logic + UI Done)
+- On app open, scans bank/UPI SMS and surfaces an **"X new transactions found"** banner → one-tap review & import
+- **Robust SMS parser** across SBI, HDFC, ICICI, Axis, Kotak, Paytm, PhonePe & GPay — extracts amount, date, merchant and debit/credit direction
+- Ignores the noise — **OTPs, balance enquiries, and promo messages** are filtered out (a message must carry both an amount *and* a debit/credit verb)
+- **UPI ID mapper** — decodes VPAs like `swiggy@okhdfcbank` → *Swiggy*, and learns your VPAs over time
+- Reuses the Phase 1 **review-before-import** flow, duplicate detection, and merchant memory
+- **Won't re-import** the same SMS twice (fingerprint dedupe)
+- Native bridge is **web-safe** — runs as a demo in the browser, real inbox inside the Android app
+- ⏳ *Remaining:* packaging the signed Android APK — see **[ANDROID.md](ANDROID.md)**
+
 ### 🏠 Core App
 - **Dashboard** — 6-month spend chart, budget alerts, savings goal progress, recent transactions
 - **Transactions** — full list with search, filter, mood tracking
@@ -38,7 +48,6 @@ SpendWise is a privacy-first expense tracker that works the way Indian users act
 - **Dark mode** + INR/multi-currency support
 
 ### 🔜 Coming Soon
-- **Phase 2** — SMS auto-import (Android, via Capacitor) + UPI ID mapper
 - **Phase 3** — Live bank feed via Setu / Finvu Account Aggregator (RBI-licensed)
 - **Phase 4** — AI enrichment: decode cryptic descriptions, spend pattern alerts, receipt OCR
 - **Phase 5** — WhatsApp bot, split bill tracker, tax slab estimator, net worth tracker
@@ -55,8 +64,8 @@ SpendWise is a privacy-first expense tracker that works the way Indian users act
 | Charts | Recharts |
 | PDF parsing | pdfjs-dist v4 |
 | AI parsing | Claude API (optional) |
-| Build | Vite 5 (code-split: main 154kB) |
-| Mobile (soon) | Capacitor |
+| Build | Vite 5 (code-split: main 166kB) |
+| Mobile | Capacitor (Android) — see [ANDROID.md](ANDROID.md) |
 
 ---
 
@@ -84,17 +93,23 @@ For smarter PDF statement parsing (messy formats, scanned statements), add a Cla
 ```
 src/
 ├── components/
-│   ├── ImportPreview.tsx   # Confirm table before bulk import
-│   ├── Layout.tsx          # Nav + app shell
+│   ├── ImportPreview.tsx    # Confirm table before bulk import
+│   ├── SmsImportBanner.tsx  # [P2] "X new transactions found" banner
+│   ├── Layout.tsx           # Nav + app shell
 │   └── TransactionModal.tsx
 ├── lib/
-│   ├── aiParser.ts         # Heuristic + Claude AI statement parser
-│   ├── fileReader.ts       # CSV/TXT/PDF → plain text
-│   ├── merchantMemory.ts   # Merchant → category learning (localStorage)
+│   ├── aiParser.ts          # Heuristic + Claude AI statement parser
+│   ├── fileReader.ts        # CSV/TXT/PDF → plain text
+│   ├── merchantMemory.ts    # Merchant → category learning (localStorage)
+│   ├── bankPatterns.ts      # [P2] Bank/UPI SMS → transactions
+│   ├── upiMapper.ts         # [P2] VPA → merchant name + learning
+│   ├── smsBridge.ts         # [P2] Capacitor SMS bridge (web-safe)
 │   └── utils.ts
+├── hooks/
+│   └── useSmsSync.ts        # [P2] read → parse → dedupe → import
 ├── pages/
 │   ├── Dashboard.tsx
-│   ├── Import.tsx          # Upload/parse/confirm flow
+│   ├── Import.tsx           # Upload/parse/confirm flow
 │   ├── Transactions.tsx
 │   ├── Analytics.tsx
 │   ├── Budgets.tsx
@@ -102,13 +117,17 @@ src/
 │   ├── AIAssistant.tsx
 │   └── Settings.tsx
 ├── store/
-│   └── useStore.ts         # Zustand store (transactions, budgets, goals, settings)
+│   └── useStore.ts          # Zustand store (transactions, budgets, goals, settings)
 ├── types/
 │   └── index.ts
 └── data/
     ├── categories.ts
-    └── sampleData.ts
+    ├── sampleData.ts
+    └── sampleSms.ts         # [P2] Demo SMS for browser testing
 ```
+
+> `[P2]` = Phase 2 (SMS auto-import). Native build config lives in
+> `capacitor.config.ts`; see **[ANDROID.md](ANDROID.md)**.
 
 ---
 
@@ -116,7 +135,7 @@ src/
 
 ```
 ✅ Phase 1  — PDF/CSV import + AI parser
-⏳ Phase 2  — SMS auto-import (Android)
+✅ Phase 2  — SMS auto-import + UPI mapper (logic + UI; APK packaging pending)
 ⏳ Phase 3  — Live bank feed (Account Aggregator)
 ⏳ Phase 4  — AI enrichment + receipt OCR
 ⏳ Phase 5  — WhatsApp bot, split bills, tax estimator

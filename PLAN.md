@@ -1,0 +1,215 @@
+# SpendWise — Complete Feature Plan & Build Roadmap
+
+## What We're Building
+A full-featured, AI-powered expense tracker that goes far beyond "add expense, see chart." SpendWise will feel like a personal finance co-pilot — proactive, intelligent, and genuinely useful.
+
+---
+
+## Tech Stack
+
+| Layer | Choice | Why |
+|---|---|---|
+| Framework | React + TypeScript | Type safety, component reuse |
+| Styling | Tailwind CSS + shadcn/ui | Fast, beautiful, consistent UI |
+| Charts | Recharts | Lightweight, composable |
+| State | Zustand | Simple global state, no boilerplate |
+| Storage | localStorage → IndexedDB | Offline-first, no backend needed initially |
+| AI | Claude API (claude-haiku-4-5) | Fast, cheap, smart for finance tasks |
+| OCR | Tesseract.js | Client-side receipt scanning |
+| Auth | (Phase 2) Supabase | Easy auth + cloud sync |
+| Export | jsPDF + SheetJS | PDF/Excel exports |
+
+---
+
+## Feature Breakdown by Phase
+
+### Phase 1 — Core (Week 1–2)
+**The basics, done beautifully.**
+
+- [ ] **Dashboard** — Net balance, monthly spend, income vs expense card
+- [ ] **Add Expense** — Amount, category, date, note, payment method
+- [ ] **Add Income** — Salary, freelance, other income sources
+- [ ] **Categories** — 15 default categories with icons & colors (editable)
+- [ ] **Transaction List** — Search, filter by date/category/type, sort
+- [ ] **Edit & Delete** — Full CRUD on all transactions
+- [ ] **Monthly Budget** — Set per-category budget limits
+- [ ] **Budget Progress Bars** — Visual % used per category
+- [ ] **Basic Charts** — Pie chart (by category), bar chart (monthly trend), line chart (balance over time)
+- [ ] **Responsive Design** — Works on mobile and desktop
+
+---
+
+### Phase 2 — Smart Features (Week 3)
+**Features that make users say "wow."**
+
+- [ ] **Receipt Scanner** — Upload photo → Tesseract.js OCR → auto-fill amount, merchant, date
+- [ ] **Recurring Expenses** — Mark transactions as daily/weekly/monthly, auto-remind
+- [ ] **Subscription Tracker** — Dedicated view of all subscriptions with renewal dates & total monthly cost
+- [ ] **Split Expense** — Split any expense across people, track who owes what
+- [ ] **Multi-Currency** — Log in any currency, auto-convert to base currency
+- [ ] **Tags** — Free-form tags on any transaction (e.g., #vacation, #work)
+- [ ] **Notes & Attachments** — Attach receipt images to transactions
+- [ ] **Bill Reminders** — Set reminders for upcoming bills (push notification)
+- [ ] **Net Worth Tracker** — Assets + liabilities = net worth over time
+- [ ] **Savings Goals** — Create goals (e.g., "MacBook — ₹80,000"), track progress
+- [ ] **Tax Category Tagging** — Mark expenses as deductible, generate tax summary
+
+---
+
+### Phase 3 — AI Integration (Week 4)
+**The intelligence layer — what makes SpendWise unique.**
+
+- [ ] **AI Chat (Finance Assistant)** — Natural language: "How much did I spend on food last month?" → instant answer
+- [ ] **Natural Language Input** — "Spent 500 on coffee this morning" → auto-parsed into transaction
+- [ ] **Smart Auto-Categorization** — AI reads merchant/note → suggests category (learns from corrections)
+- [ ] **Spending Insights** — Weekly AI-generated analysis: "You overspent on dining by 40% vs last month"
+- [ ] **Anomaly Detection** — "This ₹12,000 Amazon charge is 3x your usual. Unusual?"
+- [ ] **Budget Recommendations** — "Based on your income, here's an optimal budget split (50/30/20 rule)"
+- [ ] **Predictive Forecasting** — "At this rate, you'll overspend on entertainment by ₹2,300 this month"
+- [ ] **What-If Scenarios** — "If you cut Swiggy by 50%, you'd save ₹1,800/month"
+- [ ] **Savings Coach** — AI suggests where to cut based on your goals
+- [ ] **Financial Health Score** — 0–100 score based on savings rate, budget adherence, debt ratio
+
+---
+
+### Phase 4 — Unique Differentiators (Week 5)
+**Nobody else has these.**
+
+- [ ] **Mood Tracker** — Log how you felt when spending (stressed, happy, bored) → AI finds patterns ("You overspend when stressed")
+- [ ] **Carbon Footprint Score** — Each category gets an eco-score; track your spending's environmental impact
+- [ ] **Gamification** — Streaks (log 7 days in a row), badges (First Budget, Saver of the Month), XP points
+- [ ] **Leaderboard** (opt-in) — Anonymous comparison: "You spend 20% less on food than people with similar income"
+- [ ] **Wealth Projection** — "If you save ₹10k/month at 8% returns, you'll have ₹X in 10 years"
+- [ ] **AI Report Generator** — One-click PDF: monthly/yearly financial report with AI narrative
+- [ ] **Expense Heatmap Calendar** — Calendar view where each day is colored by spend intensity
+- [ ] **Smart Import** — Paste bank SMS / email statement → AI parses all transactions at once
+- [ ] **Merchant Intelligence** — App remembers your frequent merchants, auto-fills details
+- [ ] **Dark Mode + Themes** — Full dark mode + accent color picker
+
+---
+
+## App Structure (Pages/Routes)
+
+```
+/                   → Dashboard (overview, quick-add)
+/transactions       → Full transaction list with filters
+/add                → Add expense/income form
+/budgets            → Budget manager
+/analytics          → Charts & trends
+/goals              → Savings goals
+/subscriptions      → Subscription tracker
+/split              → Split expense manager
+/ai-chat            → AI finance assistant
+/settings           → Currency, categories, export, profile
+/insights           → AI-generated weekly insights
+```
+
+---
+
+## Data Models
+
+```typescript
+// Transaction
+{
+  id: string
+  type: 'expense' | 'income'
+  amount: number
+  currency: string
+  category: string
+  subcategory?: string
+  merchant?: string
+  note?: string
+  date: Date
+  tags: string[]
+  mood?: 'happy' | 'neutral' | 'stressed' | 'impulsive'
+  isRecurring: boolean
+  recurringInterval?: 'daily' | 'weekly' | 'monthly'
+  receiptUrl?: string
+  taxDeductible?: boolean
+  splitWith?: string[]
+}
+
+// Budget
+{
+  id: string
+  category: string
+  limit: number
+  period: 'monthly' | 'weekly'
+  alertAt: number  // percentage (e.g. 80 = alert at 80%)
+}
+
+// SavingsGoal
+{
+  id: string
+  name: string
+  targetAmount: number
+  currentAmount: number
+  targetDate: Date
+  icon: string
+}
+```
+
+---
+
+## AI Integration Points (Claude API)
+
+| Feature | Prompt Strategy | Speed |
+|---|---|---|
+| Auto-categorize | "Given merchant: '{name}', classify into: [categories]" | ~200ms |
+| NL input parse | "Parse: '{text}' into {amount, category, date, note}" | ~300ms |
+| Weekly insights | Batch last 30 transactions → generate 3 key insights | ~1s |
+| Anomaly detection | Compare new transaction to last 90 days avg per category | ~500ms |
+| Chat assistant | Full conversation with transaction context injected | ~1s |
+| Budget recommendations | Income + 3-month spend history → suggest limits | ~1s |
+| Report narrative | Transaction summary → write financial narrative | ~2s |
+
+---
+
+## Build Order (Step by Step)
+
+1. **Project setup** — Vite + React + TypeScript + Tailwind + shadcn
+2. **Data layer** — Zustand store + localStorage persistence
+3. **Dashboard page** — Summary cards + quick add button
+4. **Transaction CRUD** — Add/Edit/Delete/List
+5. **Categories & Budgets** — Setup + progress UI
+6. **Charts page** — Recharts integration
+7. **Claude API setup** — API key config, base hook
+8. **Auto-categorize AI** — First AI feature (instant value)
+9. **NL input AI** — "Add expense by typing naturally"
+10. **AI Chat page** — Finance assistant
+11. **Weekly insights AI** — Background-generated insights
+12. **Receipt scanner** — Tesseract.js integration
+13. **Recurring + Subscriptions** — Recurring logic
+14. **Savings goals** — Goal tracking UI
+15. **Mood tracker** — Emotion tagging
+16. **Gamification** — Streaks + badges
+17. **Export (PDF/CSV)** — jsPDF + SheetJS
+18. **Carbon footprint** — Eco-score per category
+19. **Dark mode + themes** — Final polish
+20. **PWA setup** — Installable on mobile
+
+---
+
+## What Makes SpendWise Different from Competitors
+
+| Feature | SpendWise | Walnut | Money Manager | YNAB |
+|---|---|---|---|---|
+| AI Chat Assistant | ✅ | ❌ | ❌ | ❌ |
+| NL expense input | ✅ | ❌ | ❌ | ❌ |
+| Mood tracking | ✅ | ❌ | ❌ | ❌ |
+| Carbon footprint | ✅ | ❌ | ❌ | ❌ |
+| AI anomaly alerts | ✅ | ❌ | ❌ | ❌ |
+| What-if scenarios | ✅ | ❌ | ❌ | ⚠️ |
+| Gamification | ✅ | ❌ | ❌ | ❌ |
+| Receipt OCR | ✅ | ✅ | ✅ | ❌ |
+| AI report PDF | ✅ | ❌ | ❌ | ❌ |
+| Offline-first | ✅ | ❌ | ✅ | ❌ |
+| Free & open | ✅ | ❌ | ⚠️ | ❌ |
+
+---
+
+## What We'll Build First (Next Session)
+
+→ **Project setup + Dashboard + Transaction CRUD** (Phase 1 foundation)
+
+This gives us a working app immediately, then we layer AI on top.
