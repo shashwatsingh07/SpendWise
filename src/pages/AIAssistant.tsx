@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import { Send, Sparkles, Bot, User, Loader2, TrendingDown, AlertCircle, Lightbulb } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { getCategoryById } from '../data/categories'
-import { formatCurrencyFull, getLast6Months } from '../lib/utils'
+import { formatCurrencyFull } from '../lib/utils'
 
 interface Message {
   id: string
@@ -130,19 +131,19 @@ This month (${now.toLocaleString('default', { month: 'long', year: 'numeric' })}
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="px-6 py-5 border-b border-slate-100 bg-white">
+      <div className="px-6 py-5 border-b border-slate-100 dark:border-white/[0.06] bg-white/60 dark:bg-white/[0.02] backdrop-blur">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-sky-400 to-violet-500 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-glow">
             <Sparkles size={18} className="text-white" />
           </div>
           <div>
-            <h1 className="font-bold text-slate-800">AI Finance Assistant</h1>
+            <h1 className="font-bold text-slate-800 dark:text-slate-100">AI Finance Assistant</h1>
             <p className="text-xs text-slate-400">
               {settings.aiApiKey ? 'Connected to Claude' : 'Demo mode — add API key in Settings for full AI'}
             </p>
           </div>
           {!settings.aiApiKey && (
-            <div className="ml-auto flex items-center gap-1.5 text-xs text-amber-600 bg-amber-50 px-3 py-1.5 rounded-full">
+            <div className="ml-auto flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/15 px-3 py-1.5 rounded-full">
               <AlertCircle size={12} />
               Demo mode
             </div>
@@ -151,24 +152,31 @@ This month (${now.toLocaleString('default', { month: 'long', year: 'numeric' })}
       </div>
 
       {/* Insights bar */}
-      <div className="px-6 py-3 bg-gradient-to-r from-sky-50 to-violet-50 border-b border-slate-100">
+      <div className="px-6 py-3 bg-gradient-to-r from-violet-50 to-indigo-50 dark:from-violet-500/10 dark:to-indigo-500/10 border-b border-slate-100 dark:border-white/[0.06]">
         <div className="flex gap-4 overflow-x-auto pb-1">
-          <InsightChip icon={<TrendingDown size={13} />} text="Spending this month" color="sky" onClick={() => sendMessage('How much did I spend this month?')} />
+          <InsightChip icon={<TrendingDown size={13} />} text="Spending this month" color="violet" onClick={() => sendMessage('How much did I spend this month?')} />
           <InsightChip icon={<AlertCircle size={13} />} text="Budget alerts" color="amber" onClick={() => sendMessage('Which budgets am I close to exceeding?')} />
-          <InsightChip icon={<Lightbulb size={13} />} text="Savings tips" color="violet" onClick={() => sendMessage('Give me personalized savings tips')} />
+          <InsightChip icon={<Lightbulb size={13} />} text="Savings tips" color="emerald" onClick={() => sendMessage('Give me personalized savings tips')} />
         </div>
       </div>
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.map(msg => (
-          <div key={msg.id} className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+          <motion.div
+            key={msg.id}
+            layout
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+            className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+          >
             {msg.role === 'assistant' && (
-              <div className="w-8 h-8 bg-sky-500 rounded-xl flex items-center justify-center flex-shrink-0 mt-1">
+              <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0 mt-1">
                 <Bot size={15} className="text-white" />
               </div>
             )}
-            <div className={`max-w-sm rounded-2xl px-4 py-3 text-sm ${msg.role === 'user' ? 'bg-sky-500 text-white rounded-br-sm' : 'bg-white border border-slate-100 text-slate-700 rounded-bl-sm shadow-sm'}`}>
+            <div className={`max-w-sm rounded-2xl px-4 py-3 text-sm ${msg.role === 'user' ? 'bg-gradient-to-br from-violet-600 to-indigo-600 text-white rounded-br-sm shadow-lg shadow-violet-500/20' : 'bg-white dark:bg-white/[0.05] border border-slate-100 dark:border-white/10 text-slate-700 dark:text-slate-200 rounded-bl-sm shadow-sm'}`}>
               {msg.loading ? (
                 <div className="flex items-center gap-2 text-slate-400">
                   <Loader2 size={14} className="animate-spin" />
@@ -179,24 +187,24 @@ This month (${now.toLocaleString('default', { month: 'long', year: 'numeric' })}
               )}
             </div>
             {msg.role === 'user' && (
-              <div className="w-8 h-8 bg-slate-200 rounded-xl flex items-center justify-center flex-shrink-0 mt-1">
-                <User size={15} className="text-slate-500" />
+              <div className="w-8 h-8 bg-slate-200 dark:bg-white/10 rounded-xl flex items-center justify-center flex-shrink-0 mt-1">
+                <User size={15} className="text-slate-500 dark:text-slate-300" />
               </div>
             )}
-          </div>
+          </motion.div>
         ))}
         <div ref={bottomRef} />
       </div>
 
       {/* Quick prompts */}
-      <div className="px-6 py-3 border-t border-slate-50">
+      <div className="px-6 py-3 border-t border-slate-50 dark:border-white/[0.06]">
         <div className="flex gap-2 overflow-x-auto pb-1">
           {QUICK_PROMPTS.map(p => (
             <button
               key={p}
               onClick={() => sendMessage(p)}
               disabled={loading}
-              className="whitespace-nowrap text-xs px-3 py-1.5 bg-slate-100 hover:bg-sky-50 hover:text-sky-700 text-slate-600 rounded-full transition-colors disabled:opacity-50"
+              className="whitespace-nowrap text-xs px-3 py-1.5 bg-slate-100 dark:bg-white/5 hover:bg-violet-50 dark:hover:bg-violet-500/15 hover:text-violet-700 dark:hover:text-violet-300 text-slate-600 dark:text-slate-300 rounded-full transition-colors disabled:opacity-50"
             >
               {p}
             </button>
@@ -205,7 +213,7 @@ This month (${now.toLocaleString('default', { month: 'long', year: 'numeric' })}
       </div>
 
       {/* Input */}
-      <div className="px-6 py-4 border-t border-slate-100 bg-white">
+      <div className="px-6 py-4 border-t border-slate-100 dark:border-white/[0.06] bg-white/60 dark:bg-white/[0.02] backdrop-blur">
         <div className="flex gap-3">
           <input
             className="input flex-1"
@@ -215,13 +223,14 @@ This month (${now.toLocaleString('default', { month: 'long', year: 'numeric' })}
             onKeyDown={e => e.key === 'Enter' && sendMessage(input)}
             disabled={loading}
           />
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || loading}
             className="btn-primary px-4 disabled:opacity-50 flex items-center gap-2"
           >
             <Send size={15} />
-          </button>
+          </motion.button>
         </div>
       </div>
     </div>
@@ -230,9 +239,9 @@ This month (${now.toLocaleString('default', { month: 'long', year: 'numeric' })}
 
 function InsightChip({ icon, text, color, onClick }: { icon: React.ReactNode; text: string; color: string; onClick: () => void }) {
   const colors: Record<string, string> = {
-    sky: 'bg-sky-100 text-sky-700 hover:bg-sky-200',
-    amber: 'bg-amber-100 text-amber-700 hover:bg-amber-200',
-    violet: 'bg-violet-100 text-violet-700 hover:bg-violet-200',
+    violet: 'bg-violet-100 text-violet-700 hover:bg-violet-200 dark:bg-violet-500/15 dark:text-violet-300 dark:hover:bg-violet-500/25',
+    amber: 'bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:hover:bg-amber-500/25',
+    emerald: 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:hover:bg-emerald-500/25',
   }
   return (
     <button onClick={onClick} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${colors[color]}`}>

@@ -1,6 +1,8 @@
 import { useState } from 'react'
-import { Save, Eye, EyeOff } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Save, Eye, EyeOff, Moon, Sun } from 'lucide-react'
 import { useStore } from '../store/useStore'
+import { staggerContainer, fadeUp } from '../lib/motion'
 
 const CURRENCIES = [
   { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
@@ -27,12 +29,40 @@ export default function Settings() {
   }
 
   return (
-    <div className="p-6 max-w-2xl mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-slate-800">Settings</h1>
+    <motion.div variants={staggerContainer} initial="hidden" animate="show" className="p-6 max-w-2xl mx-auto space-y-6">
+      <motion.h1 variants={fadeUp} className="text-2xl font-bold text-slate-800 dark:text-slate-100">Settings</motion.h1>
+
+      {/* Appearance */}
+      <motion.div variants={fadeUp} className="card card-hover p-6 space-y-4">
+        <h2 className="font-semibold text-slate-700 dark:text-slate-200">Appearance</h2>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-white">
+              {settings.darkMode ? <Moon size={16} /> : <Sun size={16} />}
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-700 dark:text-slate-200">Dark mode</p>
+              <p className="text-xs text-slate-400">{settings.darkMode ? 'Premium dark theme' : 'Light theme'}</p>
+            </div>
+          </div>
+          {/* Toggle */}
+          <button
+            onClick={() => updateSettings({ darkMode: !settings.darkMode })}
+            className={`relative w-12 h-7 rounded-full transition-colors ${settings.darkMode ? 'bg-violet-600' : 'bg-slate-300'}`}
+            aria-label="Toggle dark mode"
+          >
+            <motion.span
+              layout
+              transition={{ type: 'spring', stiffness: 500, damping: 32 }}
+              className={`absolute top-1 h-5 w-5 rounded-full bg-white shadow ${settings.darkMode ? 'right-1' : 'left-1'}`}
+            />
+          </button>
+        </div>
+      </motion.div>
 
       {/* Profile */}
-      <div className="card p-6 space-y-4">
-        <h2 className="font-semibold text-slate-700">Profile</h2>
+      <motion.div variants={fadeUp} className="card card-hover p-6 space-y-4">
+        <h2 className="font-semibold text-slate-700 dark:text-slate-200">Profile</h2>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="label">Your Name</label>
@@ -43,17 +73,17 @@ export default function Settings() {
             <input type="number" className="input" value={monthlyIncome} onChange={e => setMonthlyIncome(e.target.value)} placeholder="75000" />
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Currency */}
-      <div className="card p-6 space-y-4">
-        <h2 className="font-semibold text-slate-700">Currency</h2>
+      <motion.div variants={fadeUp} className="card card-hover p-6 space-y-4">
+        <h2 className="font-semibold text-slate-700 dark:text-slate-200">Currency</h2>
         <div className="grid grid-cols-3 gap-2">
           {CURRENCIES.map(c => (
             <button
               key={c.code}
               onClick={() => setCurrency(c.code)}
-              className={`p-3 rounded-xl border text-sm text-left transition-all ${currency === c.code ? 'border-sky-400 bg-sky-50 text-sky-700' : 'border-slate-200 text-slate-600 hover:border-slate-300'}`}
+              className={`p-3 rounded-xl border text-sm text-left transition-all ${currency === c.code ? 'border-violet-400 bg-violet-50 text-violet-700 dark:border-violet-400/50 dark:bg-violet-500/15 dark:text-violet-200' : 'border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-white/20'}`}
             >
               <span className="text-lg font-bold">{c.symbol}</span>
               <p className="font-medium mt-0.5">{c.code}</p>
@@ -61,12 +91,12 @@ export default function Settings() {
             </button>
           ))}
         </div>
-      </div>
+      </motion.div>
 
       {/* AI Settings */}
-      <div className="card p-6 space-y-4">
+      <motion.div variants={fadeUp} className="card card-hover p-6 space-y-4">
         <div>
-          <h2 className="font-semibold text-slate-700">AI Settings</h2>
+          <h2 className="font-semibold text-slate-700 dark:text-slate-200">AI Settings</h2>
           <p className="text-xs text-slate-400 mt-0.5">Connect your Claude API key to enable full AI features</p>
         </div>
         <div>
@@ -82,25 +112,25 @@ export default function Settings() {
             <button
               type="button"
               onClick={() => setShowKey(!showKey)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
             >
               {showKey ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
           <p className="text-xs text-slate-400 mt-1.5">
-            Get your API key at <a href="https://console.anthropic.com" target="_blank" rel="noreferrer" className="text-sky-500 hover:underline">console.anthropic.com</a>. The key is stored locally only.
+            Get your API key at <a href="https://console.anthropic.com" target="_blank" rel="noreferrer" className="text-violet-500 hover:underline">console.anthropic.com</a>. The key is stored locally only.
           </p>
         </div>
-        <div className="bg-sky-50 rounded-xl p-3 text-sm text-sky-700">
+        <div className="bg-violet-50 dark:bg-violet-500/10 rounded-xl p-3 text-sm text-violet-700 dark:text-violet-200">
           <strong>With AI enabled:</strong> Natural language expense input, smart auto-categorization, personalized insights, anomaly detection, budget recommendations, and AI-generated financial reports.
         </div>
-      </div>
+      </motion.div>
 
       {/* Save button */}
-      <button onClick={handleSave} className={`btn-primary flex items-center gap-2 ${saved ? 'bg-emerald-500 hover:bg-emerald-600' : ''}`}>
+      <motion.button variants={fadeUp} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} onClick={handleSave} className={`btn-primary flex items-center gap-2 ${saved ? '!bg-emerald-500' : ''}`}>
         <Save size={16} />
         {saved ? 'Saved!' : 'Save Settings'}
-      </button>
-    </div>
+      </motion.button>
+    </motion.div>
   )
 }

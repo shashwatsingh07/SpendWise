@@ -44,8 +44,9 @@ continue. Each chunk = one commit. Run `npm run build` before committing.
       transitions (AnimatePresence), dropzone hover, success pop; banner
       slide-in + spring modal w/ click-outside (`src/pages/Import.tsx`,
       `src/components/SmsImportBanner.tsx`, `src/components/ImportPreview.tsx`)
-- [ ] **10. AI Assistant + Settings** — message motion, polished controls
-      (`src/pages/AIAssistant.tsx`, `src/pages/Settings.tsx`)
+- [x] **10. AI Assistant + Settings** — AI rebranded sky→violet, dark message
+      bubbles w/ spring motion; Settings dark-themed + new Appearance card with
+      working dark-mode toggle (`src/pages/AIAssistant.tsx`, `src/pages/Settings.tsx`)
 - [ ] **11. Modals + polish** — spring modal entrances, skeleton loaders, toasts,
       empty states (`src/components/TransactionModal.tsx`, shared)
 
