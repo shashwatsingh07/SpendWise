@@ -1,12 +1,18 @@
 import { useMemo } from 'react'
+import { motion } from 'framer-motion'
 import { useStore } from '../store/useStore'
 import { getCategoryById } from '../data/categories'
 import { formatCurrencyFull, formatCurrency, getLast6Months } from '../lib/utils'
+import { GlassTooltip } from '../components/ChartTooltip'
+import { staggerContainer, scaleIn } from '../lib/motion'
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend,
   LineChart, Line,
 } from 'recharts'
+
+const GRID = 'rgba(148,163,184,0.14)'
+const TICK = '#94a3b8'
 
 export default function Analytics() {
   const { transactions, settings } = useStore()
@@ -69,136 +75,157 @@ export default function Analytics() {
     return Object.entries(map).map(([mood, amount]) => ({ name: labels[mood] ?? mood, value: amount, color: colors[mood] ?? '#64748b' }))
   }, [transactions])
 
-  const RADIAN = Math.PI / 180
-  const renderLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percentage }: any) => {
-    if (percentage < 5) return null
-    const r = innerRadius + (outerRadius - innerRadius) * 0.5
-    const x = cx + r * Math.cos(-midAngle * RADIAN)
-    const y = cy + r * Math.sin(-midAngle * RADIAN)
-    return <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central" fontSize={11} fontWeight="bold">{percentage}%</text>
-  }
-
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-800">Analytics</h1>
-        <p className="text-sm text-slate-500 mt-0.5">Visualize your spending patterns</p>
+        <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Analytics</h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Visualize your spending patterns</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        {/* Pie: Category breakdown */}
-        <div className="card p-5">
-          <h2 className="font-semibold text-slate-700 mb-4">Spending by Category (This Month)</h2>
+      <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid grid-cols-2 gap-4">
+        {/* Donut: Category breakdown */}
+        <motion.div variants={scaleIn} className="card card-hover p-5">
+          <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4">Spending by Category (This Month)</h2>
           {categoryData.length === 0 ? (
-            <p className="text-slate-400 text-sm text-center py-10">No expenses this month</p>
+            <Empty label="No expenses this month" />
           ) : (
             <>
-              <ResponsiveContainer width="100%" height={200}>
-                <PieChart>
-                  <Pie data={categoryData} cx="50%" cy="50%" outerRadius={90} dataKey="value" labelLine={false} label={renderLabel}>
-                    {categoryData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
-                  </Pie>
-                  <Tooltip formatter={(v: number) => formatCurrencyFull(v, sym)} />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="space-y-1.5 mt-2">
-                {categoryData.slice(0, 6).map(c => (
-                  <div key={c.name} className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full inline-block" style={{ background: c.color }} />
-                      <span className="text-slate-600">{c.icon} {c.name}</span>
-                    </div>
-                    <span className="font-medium text-slate-700">{formatCurrency(c.value, sym)}</span>
-                  </div>
-                ))}
+              <div className="h-[210px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={categoryData} cx="50%" cy="50%"
+                      innerRadius={58} outerRadius={92} paddingAngle={2}
+                      dataKey="value" stroke="none"
+                      animationDuration={800} animationBegin={150}
+                    >
+                      {categoryData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                    </Pie>
+                    <Tooltip content={<GlassTooltip sym={sym} />} />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
+              <Legend2 items={categoryData.slice(0, 6).map(c => ({ name: `${c.icon} ${c.name}`, color: c.color, value: c.value }))} sym={sym} />
             </>
           )}
-        </div>
+        </motion.div>
 
         {/* Bar: Monthly income vs expenses */}
-        <div className="card p-5">
-          <h2 className="font-semibold text-slate-700 mb-4">Monthly Income vs Expenses</h2>
-          <ResponsiveContainer width="100%" height={280}>
+        <motion.div variants={scaleIn} className="card card-hover p-5">
+          <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4">Monthly Income vs Expenses</h2>
+          <div className="h-[280px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={monthlyData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="barIncome" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#34d399" /><stop offset="100%" stopColor="#059669" />
+                  </linearGradient>
+                  <linearGradient id="barExpense" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#fb7185" /><stop offset="100%" stopColor="#e11d48" />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke={GRID} vertical={false} />
+                <XAxis dataKey="label" tick={{ fontSize: 12, fill: TICK }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 12, fill: TICK }} axisLine={false} tickLine={false} tickFormatter={v => formatCurrency(v)} />
+                <Tooltip cursor={{ fill: 'rgba(148,163,184,0.08)' }} content={<GlassTooltip sym={sym} />} />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
+                <Bar dataKey="income" name="Income" fill="url(#barIncome)" radius={[5, 5, 0, 0]} animationDuration={800} />
+                <Bar dataKey="expenses" name="Expenses" fill="url(#barExpense)" radius={[5, 5, 0, 0]} animationDuration={800} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </motion.div>
+      </motion.div>
+
+      <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid grid-cols-2 gap-4">
+        {/* Line: Daily spending */}
+        <motion.div variants={scaleIn} className="card card-hover p-5">
+          <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4">Daily Spending (This Month)</h2>
+          {dailyData.length === 0 ? (
+            <Empty label="No expenses yet" />
+          ) : (
+            <div className="h-[200px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={dailyData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="lineDaily" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#22d3ee" /><stop offset="100%" stopColor="#818cf8" />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke={GRID} vertical={false} />
+                  <XAxis dataKey="day" tick={{ fontSize: 11, fill: TICK }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: TICK }} axisLine={false} tickLine={false} tickFormatter={v => formatCurrency(v)} />
+                  <Tooltip content={<GlassTooltip sym={sym} />} />
+                  <Line type="monotone" dataKey="amount" name="Amount" stroke="url(#lineDaily)" strokeWidth={2.5}
+                    dot={{ fill: '#22d3ee', r: 3, strokeWidth: 0 }} activeDot={{ r: 5, fill: '#22d3ee' }} animationDuration={900} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </motion.div>
+
+        {/* Donut: Mood-based spending */}
+        <motion.div variants={scaleIn} className="card card-hover p-5">
+          <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-1">Spending by Mood</h2>
+          <p className="text-xs text-slate-400 mb-4">Understand your emotional spending triggers</p>
+          {moodData.length === 0 ? (
+            <Empty label="No mood data yet — tag your transactions!" />
+          ) : (
+            <>
+              <div className="h-[170px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie data={moodData} cx="50%" cy="50%" innerRadius={46} outerRadius={72} paddingAngle={2}
+                      dataKey="value" stroke="none" animationDuration={800}>
+                      {moodData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                    </Pie>
+                    <Tooltip content={<GlassTooltip sym={sym} />} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <Legend2 items={moodData.map(d => ({ name: d.name, color: d.color, value: d.value }))} sym={sym} />
+            </>
+          )}
+        </motion.div>
+      </motion.div>
+
+      {/* Savings trend */}
+      <motion.div variants={scaleIn} initial="hidden" animate="show" className="card card-hover p-5">
+        <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4">Savings Trend (Last 6 Months)</h2>
+        <div className="h-[180px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
             <BarChart data={monthlyData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="label" tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={v => formatCurrency(v)} />
-              <Tooltip formatter={(v: number) => formatCurrencyFull(v, sym)} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }} />
-              <Legend />
-              <Bar dataKey="income" name="Income" fill="#22c55e" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="expenses" name="Expenses" fill="#ef4444" radius={[4, 4, 0, 0]} />
+              <CartesianGrid strokeDasharray="3 3" stroke={GRID} vertical={false} />
+              <XAxis dataKey="label" tick={{ fontSize: 12, fill: TICK }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 12, fill: TICK }} axisLine={false} tickLine={false} tickFormatter={v => formatCurrency(v)} />
+              <Tooltip cursor={{ fill: 'rgba(148,163,184,0.08)' }} content={<GlassTooltip sym={sym} />} />
+              <Bar dataKey="savings" name="Savings" radius={[5, 5, 0, 0]} animationDuration={800}>
+                {monthlyData.map((entry, i) => <Cell key={i} fill={entry.savings >= 0 ? '#22c55e' : '#ef4444'} />)}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        {/* Line: Daily spending */}
-        <div className="card p-5">
-          <h2 className="font-semibold text-slate-700 mb-4">Daily Spending (This Month)</h2>
-          {dailyData.length === 0 ? (
-            <p className="text-slate-400 text-sm text-center py-10">No expenses yet</p>
-          ) : (
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={dailyData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={v => formatCurrency(v)} />
-                <Tooltip formatter={(v: number) => formatCurrencyFull(v, sym)} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }} />
-                <Line type="monotone" dataKey="amount" stroke="#0ea5e9" strokeWidth={2} dot={{ fill: '#0ea5e9', r: 3 }} name="Amount" />
-              </LineChart>
-            </ResponsiveContainer>
-          )}
-        </div>
-
-        {/* Pie: Mood-based spending */}
-        <div className="card p-5">
-          <h2 className="font-semibold text-slate-700 mb-1">Spending by Mood</h2>
-          <p className="text-xs text-slate-400 mb-4">Understand your emotional spending triggers</p>
-          {moodData.length === 0 ? (
-            <p className="text-slate-400 text-sm text-center py-10">No mood data yet — tag your transactions!</p>
-          ) : (
-            <>
-              <ResponsiveContainer width="100%" height={160}>
-                <PieChart>
-                  <Pie data={moodData} cx="50%" cy="50%" outerRadius={70} dataKey="value" labelLine={false} label={renderLabel}>
-                    {moodData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
-                  </Pie>
-                  <Tooltip formatter={(v: number) => formatCurrencyFull(v, sym)} />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="space-y-1.5 mt-2">
-                {moodData.map(m => (
-                  <div key={m.name} className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full" style={{ background: m.color }} />
-                      <span className="text-slate-600">{m.name}</span>
-                    </div>
-                    <span className="font-medium text-slate-700">{formatCurrencyFull(m.value, sym)}</span>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Savings trend */}
-      <div className="card p-5">
-        <h2 className="font-semibold text-slate-700 mb-4">Savings Trend (Last 6 Months)</h2>
-        <ResponsiveContainer width="100%" height={180}>
-          <BarChart data={monthlyData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-            <XAxis dataKey="label" tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={v => formatCurrency(v)} />
-            <Tooltip formatter={(v: number) => formatCurrencyFull(v, sym)} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }} />
-            <Bar dataKey="savings" name="Savings" radius={[4, 4, 0, 0]}>
-              {monthlyData.map((entry, i) => <Cell key={i} fill={entry.savings >= 0 ? '#22c55e' : '#ef4444'} />)}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      </motion.div>
     </div>
   )
+}
+
+function Legend2({ items, sym }: { items: { name: string; color: string; value: number }[]; sym: string }) {
+  return (
+    <div className="space-y-1.5 mt-3">
+      {items.map(it => (
+        <div key={it.name} className="flex items-center justify-between text-sm">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: it.color }} />
+            <span className="text-slate-600 dark:text-slate-300">{it.name}</span>
+          </div>
+          <span className="font-medium text-slate-700 dark:text-slate-200 tabular-nums">{formatCurrency(it.value, sym)}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function Empty({ label }: { label: string }) {
+  return <p className="text-slate-400 dark:text-slate-500 text-sm text-center py-12">{label}</p>
 }

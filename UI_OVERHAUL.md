@@ -23,8 +23,9 @@ continue. Each chunk = one commit. Run `npm run build` before committing.
 - [x] **3. Motion primitives** — shared framer-motion variants/easings
       (`src/lib/motion.ts`) + `AnimatedNumber` count-up component
       (`src/components/AnimatedNumber.tsx`)
-- [ ] **4. Charts** — fix pie collapse (ResponsiveContainer sizing), neon
-      gradients, glass tooltips, draw-on animation (`src/pages/Analytics.tsx`,
+- [x] **4. Charts** — FIXED pie collapse (sized wrapper + donut), neon gradient
+      bars/line/area, shared GlassTooltip, draw-on animation, dark grids + dark
+      text (`src/components/ChartTooltip.tsx`, `src/pages/Analytics.tsx`,
       `src/pages/Dashboard.tsx`)
 - [x] **5. Sidebar + shell** — animated active pill (`layoutId`), nav hover
       motion, page-content cross-fade via `useOutlet` (`src/components/Layout.tsx`)

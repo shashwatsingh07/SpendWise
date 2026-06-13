@@ -4,6 +4,7 @@ import { useStore } from '../store/useStore'
 import { getCategoryById } from '../data/categories'
 import { formatCurrency, formatCurrencyFull, formatDateShort, getLast6Months, getProgressGradient } from '../lib/utils'
 import { TransactionModal } from '../components/TransactionModal'
+import { GlassTooltip } from '../components/ChartTooltip'
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
 } from 'recharts'
@@ -97,26 +98,28 @@ export default function Dashboard() {
         {/* Trend Chart */}
         <div className="col-span-2 card p-5 stagger-in" style={{ animationDelay: '200ms' }}>
           <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4">Income vs Expenses (6 months)</h2>
-          <ResponsiveContainer width="100%" height={200}>
-            <AreaChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
-              <defs>
-                <linearGradient id="income" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#22c55e" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="expenses" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.2} />
-                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-              <XAxis dataKey="label" tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={v => formatCurrency(v)} />
-              <Tooltip formatter={(v: number) => formatCurrencyFull(v, settings.currencySymbol)} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }} />
-              <Area type="monotone" dataKey="Income" stroke="#22c55e" strokeWidth={2} fill="url(#income)" />
-              <Area type="monotone" dataKey="Expenses" stroke="#ef4444" strokeWidth={2} fill="url(#expenses)" />
-            </AreaChart>
-          </ResponsiveContainer>
+          <div className="h-[200px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="income" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#34d399" stopOpacity={0.35} />
+                    <stop offset="95%" stopColor="#34d399" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="expenses" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#fb7185" stopOpacity={0.35} />
+                    <stop offset="95%" stopColor="#fb7185" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.14)" vertical={false} />
+                <XAxis dataKey="label" tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 12, fill: '#94a3b8' }} axisLine={false} tickLine={false} tickFormatter={v => formatCurrency(v)} />
+                <Tooltip content={<GlassTooltip sym={settings.currencySymbol} />} />
+                <Area type="monotone" dataKey="Income" stroke="#34d399" strokeWidth={2.5} fill="url(#income)" animationDuration={900} />
+                <Area type="monotone" dataKey="Expenses" stroke="#fb7185" strokeWidth={2.5} fill="url(#expenses)" animationDuration={900} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
         {/* Budget Alerts */}
