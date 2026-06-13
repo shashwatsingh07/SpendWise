@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { X, Sparkles, Loader2 } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { DEFAULT_CATEGORIES } from '../data/categories'
@@ -81,12 +82,21 @@ export function TransactionModal({ onClose, transaction }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-overlay">
-      <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl shadow-violet-500/20 w-full max-w-md animate-modal">
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+      onClick={onClose}
+      className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.94, y: 12 }} animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+        onClick={e => e.stopPropagation()}
+        className="bg-white dark:bg-slate-900 dark:border dark:border-white/10 rounded-3xl shadow-2xl shadow-violet-500/20 w-full max-w-md"
+      >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-700">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-white/10">
           <h2 className="font-semibold text-slate-800 dark:text-slate-100">{transaction ? 'Edit' : 'Add'} Transaction</h2>
-          <button onClick={onClose} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
+          <button onClick={onClose} className="p-1.5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors">
             <X size={18} className="text-slate-500" />
           </button>
         </div>
@@ -118,7 +128,7 @@ export function TransactionModal({ onClose, transaction }: Props) {
           </div>
 
           {/* Type toggle */}
-          <div className="flex rounded-xl bg-slate-100 dark:bg-slate-700/60 p-1 gap-1">
+          <div className="flex rounded-xl bg-slate-100 dark:bg-white/5 p-1 gap-1">
             {(['expense', 'income'] as const).map(t => (
               <button
                 key={t}
@@ -128,9 +138,9 @@ export function TransactionModal({ onClose, transaction }: Props) {
                   'flex-1 py-2 rounded-lg text-sm font-medium transition-colors',
                   type === t
                     ? t === 'expense'
-                      ? 'bg-white text-red-500 shadow-sm'
-                      : 'bg-white text-emerald-500 shadow-sm'
-                    : 'text-slate-500'
+                      ? 'bg-white dark:bg-white/10 text-rose-500 dark:text-rose-400 shadow-sm'
+                      : 'bg-white dark:bg-white/10 text-emerald-500 dark:text-emerald-400 shadow-sm'
+                    : 'text-slate-500 dark:text-slate-400'
                 )}
               >
                 {t === 'expense' ? '↑ Expense' : '↓ Income'}
@@ -251,7 +261,7 @@ export function TransactionModal({ onClose, transaction }: Props) {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-700 flex gap-3">
+        <div className="px-6 py-4 border-t border-slate-100 dark:border-white/10 flex gap-3">
           <button type="button" onClick={onClose} className="flex-1 btn-ghost">Cancel</button>
           <button
             type="button"
@@ -262,7 +272,7 @@ export function TransactionModal({ onClose, transaction }: Props) {
             {transaction ? 'Update' : 'Add'} Transaction
           </button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }
