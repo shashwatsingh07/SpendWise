@@ -7,7 +7,8 @@ import { formatCurrency, formatCurrencyFull, formatDateShort, getLast6Months, ge
 import { TransactionModal } from '../components/TransactionModal'
 import { GlassTooltip } from '../components/ChartTooltip'
 import { AnimatedNumber } from '../components/AnimatedNumber'
-import { staggerContainer, fadeUp, scaleIn, EASE } from '../lib/motion'
+import { ProgressBar } from '../components/ProgressBar'
+import { staggerContainer, fadeUp, scaleIn } from '../lib/motion'
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
 } from 'recharts'
@@ -234,21 +235,6 @@ export default function Dashboard() {
 
       {addOpen && <TransactionModal onClose={() => setAddOpen(false)} />}
     </motion.div>
-  )
-}
-
-/** Animated progress fill — grows from 0 to pct% with a spring-y ease. */
-function ProgressBar({ pct, gradient, color }: { pct: number; gradient?: string; color?: string }) {
-  return (
-    <div className="h-1.5 bg-slate-100 dark:bg-white/10 rounded-full overflow-hidden">
-      <motion.div
-        className={`h-full rounded-full ${gradient ?? ''}`}
-        style={color ? { background: `linear-gradient(90deg, ${color}, ${color}aa)` } : undefined}
-        initial={{ width: 0 }}
-        animate={{ width: `${pct}%` }}
-        transition={{ duration: 0.9, ease: EASE, delay: 0.25 }}
-      />
-    </div>
   )
 }
 

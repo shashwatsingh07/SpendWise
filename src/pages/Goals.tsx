@@ -1,7 +1,10 @@
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { Plus, Trash2, Edit2, Target } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { formatCurrencyFull, formatDate } from '../lib/utils'
+import { ProgressBar } from '../components/ProgressBar'
+import { staggerContainer, fadeUp, scaleIn } from '../lib/motion'
 import { SavingsGoal } from '../types'
 
 const GOAL_ICONS = ['💻', '🏖️', '🏠', '🚗', '🛡️', '💍', '✈️', '📱', '🎓', '💰', '🎯', '🏋️']
@@ -17,36 +20,36 @@ export default function Goals() {
   const totalTarget = goals.reduce((s, g) => s + g.targetAmount, 0)
 
   return (
-    <div className="page-enter p-6 max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+    <motion.div variants={staggerContainer} initial="hidden" animate="show" className="p-6 max-w-4xl mx-auto space-y-6">
+      <motion.div variants={fadeUp} className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Savings Goals</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
             {formatCurrencyFull(totalSaved, sym)} saved of {formatCurrencyFull(totalTarget, sym)} across {goals.length} goals
           </p>
         </div>
-        <button onClick={() => { setEditGoal(null); setShowForm(true) }} className="btn-primary flex items-center gap-2">
+        <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={() => { setEditGoal(null); setShowForm(true) }} className="btn-primary flex items-center gap-2">
           <Plus size={16} /> New Goal
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
 
       {goals.length === 0 ? (
-        <div className="card p-16 text-center text-slate-400">
+        <motion.div variants={fadeUp} className="card p-16 text-center text-slate-400">
           <Target size={40} className="mx-auto mb-3 opacity-30" />
           <p className="font-medium">No goals yet</p>
           <p className="text-sm mt-1">Set a savings goal to stay motivated</p>
-        </div>
+        </motion.div>
       ) : (
-        <div className="grid grid-cols-2 gap-4">
-          {goals.map((goal, i) => {
+        <motion.div variants={staggerContainer} className="grid grid-cols-2 gap-4">
+          {goals.map(goal => {
             const pct = Math.min((goal.currentAmount / goal.targetAmount) * 100, 100)
             const remaining = goal.targetAmount - goal.currentAmount
             const daysLeft = Math.max(Math.ceil((new Date(goal.targetDate).getTime() - Date.now()) / 86400000), 0)
             return (
-              <div key={goal.id} className="card p-5 stagger-in transition-transform hover:scale-[1.02]" style={{ animationDelay: `${i * 50}ms` }}>
+              <motion.div key={goal.id} variants={scaleIn} whileHover={{ y: -3 }} className="card card-hover p-5">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style={{ background: `${goal.color}20` }}>
+                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style={{ background: `${goal.color}22` }}>
                       {goal.icon}
                     </div>
                     <div>
@@ -57,26 +60,24 @@ export default function Goals() {
                     </div>
                   </div>
                   <div className="flex gap-1">
-                    <button onClick={() => { setEditGoal(goal); setShowForm(true) }} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-slate-400">
+                    <button onClick={() => { setEditGoal(goal); setShowForm(true) }} className="p-1.5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg text-slate-400">
                       <Edit2 size={13} />
                     </button>
-                    <button onClick={() => deleteGoal(goal.id)} className="p-1.5 hover:bg-red-50 dark:hover:bg-red-500/20 rounded-lg text-slate-400 hover:text-red-400">
+                    <button onClick={() => deleteGoal(goal.id)} className="p-1.5 hover:bg-rose-50 dark:hover:bg-rose-500/15 rounded-lg text-slate-400 hover:text-rose-400">
                       <Trash2 size={13} />
                     </button>
                   </div>
                 </div>
 
                 <div className="mb-3">
-                  <div className="flex justify-between text-sm mb-1.5">
+                  <div className="flex justify-between text-sm mb-1.5 tabular-nums">
                     <span className="font-semibold" style={{ color: goal.color }}>
                       {formatCurrencyFull(goal.currentAmount, sym)}
                     </span>
                     <span className="text-slate-400">{formatCurrencyFull(goal.targetAmount, sym)}</span>
                   </div>
-                  <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full transition-all duration-700 ease-out" style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${goal.color}, ${goal.color}aa)` }} />
-                  </div>
-                  <div className="flex justify-between text-xs mt-1">
+                  <ProgressBar pct={pct} color={goal.color} height="h-3" />
+                  <div className="flex justify-between text-xs mt-1 tabular-nums">
                     <span className="font-semibold" style={{ color: goal.color }}>{Math.round(pct)}% complete</span>
                     <span className="text-slate-400">{formatCurrencyFull(remaining, sym)} to go</span>
                   </div>
@@ -87,14 +88,14 @@ export default function Goals() {
                     🎉 Goal achieved!
                   </div>
                 ) : (
-                  <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl px-3 py-2 text-xs text-slate-500 dark:text-slate-300">
+                  <div className="bg-slate-50 dark:bg-white/[0.04] rounded-xl px-3 py-2 text-xs text-slate-500 dark:text-slate-300">
                     Save <strong>{formatCurrencyFull(daysLeft > 0 ? Math.ceil(remaining / (daysLeft / 30)) : remaining, sym)}/month</strong> to reach this goal on time
                   </div>
                 )}
-              </div>
+              </motion.div>
             )
           })}
-        </div>
+        </motion.div>
       )}
 
       {showForm && (
@@ -108,7 +109,7 @@ export default function Goals() {
           onClose={() => setShowForm(false)}
         />
       )}
-    </div>
+    </motion.div>
   )
 }
 
@@ -125,8 +126,17 @@ function GoalForm({ goal, onSave, onClose }: {
   const [date, setDate] = useState(goal?.targetDate ? goal.targetDate.split('T')[0] : '')
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-overlay">
-      <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl shadow-violet-500/20 w-full max-w-sm p-6 animate-modal">
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.94, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+        onClick={e => e.stopPropagation()}
+        className="bg-white dark:bg-slate-900 dark:border dark:border-white/10 rounded-3xl shadow-2xl shadow-violet-500/20 w-full max-w-sm p-6"
+      >
         <h2 className="font-semibold text-slate-800 dark:text-slate-100 mb-4">{goal ? 'Edit' : 'New'} Goal</h2>
         <div className="space-y-3">
           <div>
@@ -138,7 +148,7 @@ function GoalForm({ goal, onSave, onClose }: {
             <label className="label">Choose Icon</label>
             <div className="flex flex-wrap gap-2">
               {GOAL_ICONS.map(ic => (
-                <button key={ic} onClick={() => setIcon(ic)} className={`w-9 h-9 rounded-xl text-xl transition-all ${icon === ic ? 'ring-2 ring-violet-400 bg-violet-50 dark:bg-violet-500/20 scale-110' : 'hover:bg-slate-100 dark:hover:bg-slate-700'}`}>{ic}</button>
+                <button key={ic} onClick={() => setIcon(ic)} className={`w-9 h-9 rounded-xl text-xl transition-all ${icon === ic ? 'ring-2 ring-violet-400 bg-violet-50 dark:bg-violet-500/20 scale-110' : 'hover:bg-slate-100 dark:hover:bg-white/10'}`}>{ic}</button>
               ))}
             </div>
           </div>
@@ -147,7 +157,7 @@ function GoalForm({ goal, onSave, onClose }: {
             <label className="label">Color</label>
             <div className="flex gap-2">
               {GOAL_COLORS.map(c => (
-                <button key={c} onClick={() => setColor(c)} className={`w-7 h-7 rounded-full transition-all ${color === c ? 'ring-2 ring-offset-2 ring-slate-400 scale-110' : ''}`} style={{ background: c }} />
+                <button key={c} onClick={() => setColor(c)} className={`w-7 h-7 rounded-full transition-all ${color === c ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-slate-900 ring-slate-400 scale-110' : ''}`} style={{ background: c }} />
               ))}
             </div>
           </div>
@@ -178,7 +188,7 @@ function GoalForm({ goal, onSave, onClose }: {
             Save Goal
           </button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }

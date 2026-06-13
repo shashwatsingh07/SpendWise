@@ -1,11 +1,12 @@
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { Plus, Trash2, Edit2, AlertCircle } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { getCategoryById, DEFAULT_CATEGORIES } from '../data/categories'
 import { formatCurrencyFull, getProgressGradient } from '../lib/utils'
+import { ProgressBar } from '../components/ProgressBar'
+import { staggerContainer, fadeUp, scaleIn } from '../lib/motion'
 import { Budget } from '../types'
-import { cn } from '../lib/utils'
-import { v4 as uuid } from 'uuid'
 
 export default function Budgets() {
   const { budgets, addBudget, updateBudget, deleteBudget, getCategorySpend, settings } = useStore()
@@ -19,42 +20,38 @@ export default function Budgets() {
 
   const totalBudgeted = budgets.reduce((s, b) => s + b.limit, 0)
   const totalSpent = budgets.reduce((s, b) => s + getCategorySpend(b.category, y, m), 0)
+  const overallPct = totalBudgeted > 0 ? (totalSpent / totalBudgeted) * 100 : 0
 
   return (
-    <div className="page-enter p-6 max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+    <motion.div variants={staggerContainer} initial="hidden" animate="show" className="p-6 max-w-4xl mx-auto space-y-6">
+      <motion.div variants={fadeUp} className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Budgets</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
             {formatCurrencyFull(totalSpent, sym)} spent of {formatCurrencyFull(totalBudgeted, sym)} budgeted
           </p>
         </div>
-        <button onClick={() => { setEditBudget(null); setShowForm(true) }} className="btn-primary flex items-center gap-2">
+        <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} onClick={() => { setEditBudget(null); setShowForm(true) }} className="btn-primary flex items-center gap-2">
           <Plus size={16} /> Add Budget
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
 
       {/* Overall progress */}
-      <div className="card p-5 stagger-in" style={{ animationDelay: '50ms' }}>
+      <motion.div variants={fadeUp} className="card card-hover p-5">
         <div className="flex justify-between text-sm mb-2">
           <span className="font-medium text-slate-700 dark:text-slate-200">Total Monthly Budget</span>
-          <span className="text-slate-500 dark:text-slate-400">{Math.round(totalBudgeted > 0 ? (totalSpent / totalBudgeted) * 100 : 0)}% used</span>
+          <span className="text-slate-500 dark:text-slate-400 tabular-nums">{Math.round(overallPct)}% used</span>
         </div>
-        <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-          <div
-            className={`h-full rounded-full transition-all duration-700 ease-out ${getProgressGradient(totalBudgeted > 0 ? (totalSpent / totalBudgeted) * 100 : 0)}`}
-            style={{ width: `${Math.min((totalSpent / totalBudgeted) * 100, 100)}%` }}
-          />
-        </div>
-        <div className="flex justify-between text-xs text-slate-400 mt-1.5">
+        <ProgressBar pct={overallPct} gradient={getProgressGradient(overallPct)} height="h-3" />
+        <div className="flex justify-between text-xs text-slate-400 mt-1.5 tabular-nums">
           <span>Spent: {formatCurrencyFull(totalSpent, sym)}</span>
           <span>Remaining: {formatCurrencyFull(Math.max(totalBudgeted - totalSpent, 0), sym)}</span>
         </div>
-      </div>
+      </motion.div>
 
       {/* Budget cards */}
-      <div className="grid grid-cols-2 gap-4">
-        {budgets.map((b, i) => {
+      <motion.div variants={staggerContainer} className="grid grid-cols-2 gap-4">
+        {budgets.map(b => {
           const cat = getCategoryById(b.category)
           const spent = getCategorySpend(b.category, y, m)
           const pct = Math.min(b.limit > 0 ? (spent / b.limit) * 100 : 0, 100)
@@ -62,14 +59,15 @@ export default function Budgets() {
           const isAlert = pct >= b.alertAt
 
           return (
-            <div
+            <motion.div
               key={b.id}
-              className={cn('card p-5 stagger-in transition-transform hover:scale-[1.02]', isAlert && 'border-amber-300/40 bg-amber-50/40 dark:bg-amber-500/10')}
-              style={{ animationDelay: `${100 + i * 50}ms` }}
+              variants={scaleIn}
+              whileHover={{ y: -3 }}
+              className={`card card-hover p-5 ${isAlert ? 'border-amber-300/40 dark:border-amber-400/30 bg-amber-50/40 dark:bg-amber-500/[0.07]' : ''}`}
             >
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style={{ background: `${cat.color}20` }}>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl" style={{ background: `${cat.color}22` }}>
                     {cat.icon}
                   </div>
                   <div>
@@ -79,31 +77,29 @@ export default function Budgets() {
                 </div>
                 <div className="flex items-center gap-1">
                   {isAlert && <AlertCircle size={15} className="text-amber-500" />}
-                  <button onClick={() => { setEditBudget(b); setShowForm(true) }} className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-slate-400">
+                  <button onClick={() => { setEditBudget(b); setShowForm(true) }} className="p-1.5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg text-slate-400">
                     <Edit2 size={13} />
                   </button>
-                  <button onClick={() => deleteBudget(b.id)} className="p-1.5 hover:bg-red-50 dark:hover:bg-red-500/20 rounded-lg text-slate-400 hover:text-red-400">
+                  <button onClick={() => deleteBudget(b.id)} className="p-1.5 hover:bg-rose-50 dark:hover:bg-rose-500/15 rounded-lg text-slate-400 hover:text-rose-400">
                     <Trash2 size={13} />
                   </button>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-sm tabular-nums">
                   <span className="text-slate-600 dark:text-slate-300">{formatCurrencyFull(spent, sym)} spent</span>
                   <span className="font-medium text-slate-700 dark:text-slate-200">{formatCurrencyFull(b.limit, sym)}</span>
                 </div>
-                <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-                  <div className={`h-full rounded-full transition-all duration-700 ease-out ${getProgressGradient(pct)}`} style={{ width: `${pct}%` }} />
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className={pct >= 100 ? 'text-red-500 font-medium' : 'text-slate-400'}>
+                <ProgressBar pct={pct} gradient={getProgressGradient(pct)} height="h-2" />
+                <div className="flex justify-between text-xs tabular-nums">
+                  <span className={pct >= 100 ? 'text-rose-500 dark:text-rose-400 font-medium' : 'text-slate-400'}>
                     {pct >= 100 ? 'Budget exceeded!' : `${Math.round(pct)}% used`}
                   </span>
                   <span className="text-slate-400">{formatCurrencyFull(remaining, sym)} left</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
           )
         })}
 
@@ -113,7 +109,7 @@ export default function Budgets() {
             <p className="text-sm mt-1">Add a budget to track your spending</p>
           </div>
         )}
-      </div>
+      </motion.div>
 
       {showForm && (
         <BudgetForm
@@ -127,7 +123,7 @@ export default function Budgets() {
           existingCategories={budgets.map(b => b.category)}
         />
       )}
-    </div>
+    </motion.div>
   )
 }
 
@@ -145,8 +141,17 @@ function BudgetForm({ budget, onSave, onClose, existingCategories }: {
   const available = DEFAULT_CATEGORIES.filter(c => c.type === 'expense' && (c.id === budget?.category || !existingCategories.includes(c.id)))
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-overlay">
-      <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl shadow-violet-500/20 w-full max-w-sm p-6 animate-modal">
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.94, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+        onClick={e => e.stopPropagation()}
+        className="bg-white dark:bg-slate-900 dark:border dark:border-white/10 rounded-3xl shadow-2xl shadow-violet-500/20 w-full max-w-sm p-6"
+      >
         <h2 className="font-semibold text-slate-800 dark:text-slate-100 mb-4">{budget ? 'Edit' : 'Add'} Budget</h2>
         <div className="space-y-3">
           <div>
@@ -184,7 +189,7 @@ function BudgetForm({ budget, onSave, onClose, existingCategories }: {
             Save Budget
           </button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }

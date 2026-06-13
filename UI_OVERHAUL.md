@@ -36,8 +36,10 @@ continue. Each chunk = one commit. Run `npm run build` before committing.
       stagger on recent transactions (`src/pages/Dashboard.tsx`)
 - [x] **7. Transactions** — staggered rows, layout/AnimatePresence reflow on
       filter+sort, dark-tuned badges/actions (`src/pages/Transactions.tsx`)
-- [ ] **8. Budgets + Goals** — animated progress rings/bars, card motion
-      (`src/pages/Budgets.tsx`, `src/pages/Goals.tsx`)
+- [x] **8. Budgets + Goals** — shared animated `ProgressBar` (also used by
+      Dashboard), card stagger + hover, spring modals, dark-tuned colours
+      (`src/components/ProgressBar.tsx`, `src/pages/Budgets.tsx`,
+      `src/pages/Goals.tsx`, `src/pages/Dashboard.tsx`)
 - [ ] **9. Import + SMS banner** — animated banner, dropzone states, success
       moment (`src/pages/Import.tsx`, `src/components/SmsImportBanner.tsx`,
       `src/components/ImportPreview.tsx`)
