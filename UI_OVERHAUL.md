@@ -20,14 +20,16 @@ continue. Each chunk = one commit. Run `npm run build` before committing.
 - [x] **2. Premium theme** — deep-navy palette, aurora background, frosted glass
       cards with depth, glow shadows, gradient-text + shimmer utilities
       (`tailwind.config.js`, `src/index.css`)
-- [ ] **3. Motion primitives** — shared framer-motion helpers: `AnimatedNumber`,
-      stagger container/variants, `MotionCard` (`src/lib/motion.ts`,
-      `src/components/motion/`)
+- [x] **3. Motion primitives** — shared framer-motion variants/easings
+      (`src/lib/motion.ts`) + `AnimatedNumber` count-up component
+      (`src/components/AnimatedNumber.tsx`)
 - [ ] **4. Charts** — fix pie collapse (ResponsiveContainer sizing), neon
       gradients, glass tooltips, draw-on animation (`src/pages/Analytics.tsx`,
       `src/pages/Dashboard.tsx`)
-- [ ] **5. Sidebar + shell** — animated active pill (`layoutId`), hover motion,
-      aurora backdrop (`src/components/Layout.tsx`)
+- [x] **5. Sidebar + shell** — animated active pill (`layoutId`), nav hover
+      motion, page-content cross-fade via `useOutlet` (`src/components/Layout.tsx`)
+      <br>⚠️ Note: after adding framer-motion, clear Vite cache once
+      (`rm -rf node_modules/.vite`) if the dev server shows stale-module errors.
 - [ ] **6. Dashboard** — count-up cards (extend existing), staggered entrances,
       animated progress, hover lifts (`src/pages/Dashboard.tsx`)
 - [ ] **7. Transactions** — staggered rows, layout animation on filter/search,
