@@ -54,7 +54,7 @@ export const useStore = create<StoreState>()(
       settings: {
         currency: 'INR',
         currencySymbol: '₹',
-        darkMode: false,
+        darkMode: true,
         aiApiKey: '',
         monthlyIncome: 75000,
         name: 'Shashwat',

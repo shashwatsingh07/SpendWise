@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Layout } from './components/Layout'
+import { useStore } from './store/useStore'
 import Dashboard from './pages/Dashboard'
 import Transactions from './pages/Transactions'
 import Analytics from './pages/Analytics'
@@ -9,7 +11,16 @@ import AIAssistant from './pages/AIAssistant'
 import Import from './pages/Import'
 import Settings from './pages/Settings'
 
+/** Apply the `dark` class to <html> whenever the persisted setting changes. */
+function useThemeClass() {
+  const darkMode = useStore(s => s.settings.darkMode)
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode)
+  }, [darkMode])
+}
+
 export default function App() {
+  useThemeClass()
   return (
     <BrowserRouter>
       <Routes>
