@@ -2,6 +2,7 @@ import { NavLink, Outlet } from 'react-router-dom'
 import { LayoutDashboard, ArrowLeftRight, PieChart, Target, Wallet, Settings, Sparkles, Plus, UploadCloud } from 'lucide-react'
 import { useState } from 'react'
 import { TransactionModal } from './TransactionModal'
+import { SmsImportBanner } from './SmsImportBanner'
 import { useStore } from '../store/useStore'
 import { cn } from '../lib/utils'
 
@@ -85,6 +86,7 @@ export function Layout() {
 
       {/* Main content */}
       <main className="flex-1 overflow-y-auto">
+        <SmsImportBanner />
         <Outlet />
       </main>
 

@@ -4,6 +4,10 @@ node_modules/
 # Build output
 dist/
 dist-ssr/
+dist_verify/
+
+# Vite temp files
+vite.config.ts.timestamp-*.mjs
 
 # Local env files
 .env
@@ -17,9 +21,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# Editor
+# Editor / tooling
 .vscode/
 .idea/
+.claude/
 *.suo
 *.ntvs*
 *.njsproj

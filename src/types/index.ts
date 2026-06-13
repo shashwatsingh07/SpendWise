@@ -77,6 +77,14 @@ export interface AppSettings {
   name: string
 }
 
+// A raw SMS read off the device (Phase 2 — Android SMS auto-import)
+export interface SmsMessage {
+  id?: string
+  sender?: string // e.g. "VK-HDFCBK", "AD-SBIINB"
+  body: string
+  date: number // epoch ms when the SMS was received
+}
+
 // Summary helpers
 export interface MonthlySummary {
   month: string // YYYY-MM
