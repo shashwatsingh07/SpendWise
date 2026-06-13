@@ -31,8 +31,9 @@ continue. Each chunk = one commit. Run `npm run build` before committing.
       motion, page-content cross-fade via `useOutlet` (`src/components/Layout.tsx`)
       <br>⚠️ Note: after adding framer-motion, clear Vite cache once
       (`rm -rf node_modules/.vite`) if the dev server shows stale-module errors.
-- [ ] **6. Dashboard** — count-up cards (extend existing), staggered entrances,
-      animated progress, hover lifts (`src/pages/Dashboard.tsx`)
+- [x] **6. Dashboard** — staggered motion entrances, AnimatedNumber count-up
+      cards with hover lift + sheen, animated ProgressBar (budget + goals),
+      stagger on recent transactions (`src/pages/Dashboard.tsx`)
 - [ ] **7. Transactions** — staggered rows, layout animation on filter/search,
       hover reveal (`src/pages/Transactions.tsx`)
 - [ ] **8. Budgets + Goals** — animated progress rings/bars, card motion
