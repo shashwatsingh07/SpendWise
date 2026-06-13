@@ -8,6 +8,7 @@
  */
 
 import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { MessageSquareText, X, Sparkles } from 'lucide-react'
 import { useSmsSync } from '../hooks/useSmsSync'
 import { ImportPreview } from './ImportPreview'
@@ -31,14 +32,17 @@ export function SmsImportBanner() {
     // brief success toast after an import
     if (imported !== null) {
       return (
-        <div className="mx-6 mt-4 flex items-center justify-between gap-3 rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+          className="mx-6 mt-4 flex items-center justify-between gap-3 rounded-xl bg-emerald-50 dark:bg-emerald-500/15 px-4 py-3 text-sm text-emerald-700 dark:text-emerald-300"
+        >
           <span className="flex items-center gap-2">
             <Sparkles size={15} /> {imported} transaction{imported === 1 ? '' : 's'} imported from SMS.
           </span>
-          <button onClick={() => setImported(null)} className="text-emerald-500 hover:text-emerald-700">
+          <button onClick={() => setImported(null)} className="text-emerald-500 hover:text-emerald-700 dark:hover:text-emerald-200">
             <X size={15} />
           </button>
-        </div>
+        </motion.div>
       )
     }
     return null
@@ -49,7 +53,11 @@ export function SmsImportBanner() {
   return (
     <>
       {/* Banner */}
-      <div className="mx-6 mt-4 flex items-center gap-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-3 text-white shadow-lg shadow-violet-500/20">
+      <motion.div
+        initial={{ opacity: 0, y: -16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 24 }}
+        className="mx-6 mt-4 flex items-center gap-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-3 text-white shadow-lg shadow-violet-500/30">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/15">
           <MessageSquareText size={18} />
         </div>
@@ -61,39 +69,51 @@ export function SmsImportBanner() {
             From your bank &amp; UPI messages — review and import in one tap.
           </p>
         </div>
-        <button
+        <motion.button
+          whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
           onClick={() => setOpen(true)}
           className="shrink-0 rounded-lg bg-white px-3 py-1.5 text-sm font-medium text-violet-700 transition hover:bg-violet-50"
         >
           Review
-        </button>
+        </motion.button>
         <button onClick={dismiss} className="shrink-0 text-white/70 hover:text-white" aria-label="Dismiss">
           <X size={18} />
         </button>
-      </div>
+      </motion.div>
 
       {/* Review modal */}
-      {open && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-900/40 p-4 backdrop-blur-sm sm:p-8">
-          <div className="card w-full max-w-4xl p-5">
-            <div className="mb-4 flex items-center gap-2">
-              <MessageSquareText size={20} className="text-violet-600" />
-              <h2 className="text-lg font-bold text-slate-800">Import from SMS</h2>
-            </div>
-            <ImportPreview
-              rows={rows}
-              usedAI={false}
-              onChange={setRows}
-              onConfirm={() => {
-                const n = confirm(rows)
-                setImported(n)
-                setOpen(false)
-              }}
-              onCancel={() => setOpen(false)}
-            />
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-slate-950/60 p-4 backdrop-blur-sm sm:p-8"
+            onClick={() => setOpen(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 12 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.97, y: 8 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+              onClick={e => e.stopPropagation()}
+              className="card w-full max-w-4xl p-5"
+            >
+              <div className="mb-4 flex items-center gap-2">
+                <MessageSquareText size={20} className="text-violet-500" />
+                <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">Import from SMS</h2>
+              </div>
+              <ImportPreview
+                rows={rows}
+                usedAI={false}
+                onChange={setRows}
+                onConfirm={() => {
+                  const n = confirm(rows)
+                  setImported(n)
+                  setOpen(false)
+                }}
+                onCancel={() => setOpen(false)}
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }

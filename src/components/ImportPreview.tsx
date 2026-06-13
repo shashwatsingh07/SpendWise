@@ -36,27 +36,27 @@ export function ImportPreview({ rows, usedAI, onChange, onConfirm, onCancel }: P
       {/* Summary bar */}
       <div className="card p-4 flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-2 text-sm">
-          <span className="font-semibold text-slate-800">{rows.length}</span>
-          <span className="text-slate-500">transactions found</span>
+          <span className="font-semibold text-slate-800 dark:text-slate-100 tabular-nums">{rows.length}</span>
+          <span className="text-slate-500 dark:text-slate-400">transactions found</span>
         </div>
         <div className="flex items-center gap-2 text-sm">
-          <span className="font-semibold text-violet-600">{selectedRows.length}</span>
-          <span className="text-slate-500">selected</span>
+          <span className="font-semibold text-violet-600 dark:text-violet-300 tabular-nums">{selectedRows.length}</span>
+          <span className="text-slate-500 dark:text-slate-400">selected</span>
         </div>
         {dupCount > 0 && (
-          <div className="flex items-center gap-1.5 text-sm text-amber-600 bg-amber-50 px-3 py-1 rounded-full">
+          <div className="flex items-center gap-1.5 text-sm text-amber-600 dark:text-amber-300 bg-amber-50 dark:bg-amber-500/15 px-3 py-1 rounded-full">
             <AlertTriangle size={13} />
             {dupCount} possible duplicate{dupCount > 1 ? 's' : ''}
           </div>
         )}
         {usedAI && (
-          <div className="flex items-center gap-1.5 text-xs text-violet-600 bg-violet-50 px-3 py-1 rounded-full">
+          <div className="flex items-center gap-1.5 text-xs text-violet-600 dark:text-violet-300 bg-violet-50 dark:bg-violet-500/15 px-3 py-1 rounded-full">
             <Sparkles size={12} /> AI-parsed
           </div>
         )}
         <div className="ml-auto text-sm">
-          <span className="text-slate-500 mr-2">Net:</span>
-          <span className={selectedTotal >= 0 ? 'text-emerald-600 font-semibold' : 'text-rose-600 font-semibold'}>
+          <span className="text-slate-500 dark:text-slate-400 mr-2">Net:</span>
+          <span className={`font-semibold tabular-nums ${selectedTotal >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
             {selectedTotal >= 0 ? '+' : '-'}{formatCurrencyFull(Math.abs(selectedTotal), sym)}
           </span>
         </div>
@@ -64,13 +64,13 @@ export function ImportPreview({ rows, usedAI, onChange, onConfirm, onCancel }: P
 
       {/* Bulk toggles */}
       <div className="flex items-center gap-3 text-xs">
-        <button onClick={() => toggleAll(true)} className="text-violet-600 hover:underline">Select all</button>
-        <span className="text-slate-300">|</span>
-        <button onClick={() => toggleAll(false)} className="text-slate-500 hover:underline">Deselect all</button>
-        <span className="text-slate-300">|</span>
+        <button onClick={() => toggleAll(true)} className="text-violet-600 dark:text-violet-300 hover:underline">Select all</button>
+        <span className="text-slate-300 dark:text-slate-600">|</span>
+        <button onClick={() => toggleAll(false)} className="text-slate-500 dark:text-slate-400 hover:underline">Deselect all</button>
+        <span className="text-slate-300 dark:text-slate-600">|</span>
         <button
           onClick={() => onChange(rows.map(r => r.duplicate ? { ...r, selected: false } : r))}
-          className="text-amber-600 hover:underline"
+          className="text-amber-600 dark:text-amber-300 hover:underline"
         >
           Skip duplicates
         </button>
@@ -80,7 +80,7 @@ export function ImportPreview({ rows, usedAI, onChange, onConfirm, onCancel }: P
       <div className="card overflow-hidden">
         <div className="max-h-[52vh] overflow-y-auto">
           <table className="w-full text-sm">
-            <thead className="sticky top-0 bg-white/95 backdrop-blur border-b border-slate-100 text-left text-xs text-slate-400">
+            <thead className="sticky top-0 bg-white/95 dark:bg-slate-900/90 backdrop-blur border-b border-slate-100 dark:border-white/10 text-left text-xs text-slate-400">
               <tr>
                 <th className="p-3 w-10"></th>
                 <th className="p-3">Date</th>
@@ -98,9 +98,9 @@ export function ImportPreview({ rows, usedAI, onChange, onConfirm, onCancel }: P
                 return (
                   <tr
                     key={r.id}
-                    className={`border-b border-slate-50 last:border-0 transition-colors ${
+                    className={`border-b border-slate-50 dark:border-white/[0.06] last:border-0 transition-colors ${
                       r.selected ? '' : 'opacity-40'
-                    } ${r.duplicate ? 'bg-amber-50/40' : 'hover:bg-slate-50/60'}`}
+                    } ${r.duplicate ? 'bg-amber-50/40 dark:bg-amber-500/10' : 'hover:bg-slate-50/60 dark:hover:bg-white/5'}`}
                   >
                     <td className="p-3">
                       <button
@@ -108,7 +108,7 @@ export function ImportPreview({ rows, usedAI, onChange, onConfirm, onCancel }: P
                         className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
                           r.selected
                             ? 'bg-violet-600 border-violet-600 text-white'
-                            : 'border-slate-300'
+                            : 'border-slate-300 dark:border-white/20'
                         }`}
                       >
                         {r.selected && <Check size={13} />}
@@ -119,24 +119,24 @@ export function ImportPreview({ rows, usedAI, onChange, onConfirm, onCancel }: P
                         type="date"
                         value={r.date.slice(0, 10)}
                         onChange={e => update(r.id, { date: new Date(e.target.value).toISOString() })}
-                        className="bg-transparent text-slate-600 text-xs focus:outline-none"
+                        className="bg-transparent text-slate-600 dark:text-slate-300 text-xs focus:outline-none [color-scheme:dark]"
                       />
                     </td>
                     <td className="p-3 max-w-[220px]">
                       <input
                         value={r.merchant}
                         onChange={e => update(r.id, { merchant: e.target.value })}
-                        className="w-full bg-transparent text-slate-800 focus:outline-none focus:bg-white focus:ring-1 focus:ring-violet-300 rounded px-1"
+                        className="w-full bg-transparent text-slate-800 dark:text-slate-100 focus:outline-none focus:bg-white dark:focus:bg-slate-800 focus:ring-1 focus:ring-violet-300 rounded px-1"
                       />
                       {r.duplicate && (
-                        <span className="text-[10px] text-amber-600">already in your records</span>
+                        <span className="text-[10px] text-amber-600 dark:text-amber-300">already in your records</span>
                       )}
                     </td>
                     <td className="p-3">
                       <select
                         value={r.category}
                         onChange={e => update(r.id, { category: e.target.value })}
-                        className="bg-transparent text-slate-600 text-xs focus:outline-none cursor-pointer"
+                        className="bg-transparent text-slate-600 dark:text-slate-300 dark:[&>option]:bg-slate-800 text-xs focus:outline-none cursor-pointer"
                       >
                         {cats.map(c => (
                           <option key={c.id} value={c.id}>{c.icon} {c.name}</option>
@@ -144,18 +144,18 @@ export function ImportPreview({ rows, usedAI, onChange, onConfirm, onCancel }: P
                       </select>
                     </td>
                     <td className="p-3 text-right">
-                      <span className={r.type === 'expense' ? 'text-rose-600' : 'text-emerald-600'}>
+                      <span className={`tabular-nums ${r.type === 'expense' ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
                         {r.type === 'expense' ? '-' : '+'}{formatCurrencyFull(r.amount, sym)}
                       </span>
                       <button
                         onClick={() => update(r.id, { type: r.type === 'expense' ? 'income' : 'expense' })}
-                        className="block ml-auto text-[10px] text-slate-400 hover:text-violet-600"
+                        className="block ml-auto text-[10px] text-slate-400 hover:text-violet-600 dark:hover:text-violet-300"
                       >
                         {r.type === 'expense' ? 'mark income' : 'mark expense'}
                       </button>
                     </td>
                     <td className="p-3">
-                      <button onClick={() => remove(r.id)} className="text-slate-300 hover:text-rose-500">
+                      <button onClick={() => remove(r.id)} className="text-slate-300 dark:text-slate-600 hover:text-rose-500">
                         <Trash2 size={15} />
                       </button>
                     </td>

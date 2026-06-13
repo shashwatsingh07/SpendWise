@@ -40,9 +40,10 @@ continue. Each chunk = one commit. Run `npm run build` before committing.
       Dashboard), card stagger + hover, spring modals, dark-tuned colours
       (`src/components/ProgressBar.tsx`, `src/pages/Budgets.tsx`,
       `src/pages/Goals.tsx`, `src/pages/Dashboard.tsx`)
-- [ ] **9. Import + SMS banner** — animated banner, dropzone states, success
-      moment (`src/pages/Import.tsx`, `src/components/SmsImportBanner.tsx`,
-      `src/components/ImportPreview.tsx`)
+- [x] **9. Import + SMS banner** — dark ImportPreview, animated stage
+      transitions (AnimatePresence), dropzone hover, success pop; banner
+      slide-in + spring modal w/ click-outside (`src/pages/Import.tsx`,
+      `src/components/SmsImportBanner.tsx`, `src/components/ImportPreview.tsx`)
 - [ ] **10. AI Assistant + Settings** — message motion, polished controls
       (`src/pages/AIAssistant.tsx`, `src/pages/Settings.tsx`)
 - [ ] **11. Modals + polish** — spring modal entrances, skeleton loaders, toasts,
