@@ -17,9 +17,9 @@ continue. Each chunk = one commit. Run `npm run build` before committing.
 
 - [x] **1. Dark mode wiring** — apply `dark` class from settings, default to dark
       (`src/App.tsx`, `src/store/useStore.ts`)
-- [ ] **2. Premium theme** — deep-navy palette, aurora background, frosted glass
-      cards with depth, glow shadows (`tailwind.config.js`, `src/index.css`,
-      `src/components/Layout.tsx`)
+- [x] **2. Premium theme** — deep-navy palette, aurora background, frosted glass
+      cards with depth, glow shadows, gradient-text + shimmer utilities
+      (`tailwind.config.js`, `src/index.css`)
 - [ ] **3. Motion primitives** — shared framer-motion helpers: `AnimatedNumber`,
       stagger container/variants, `MotionCard` (`src/lib/motion.ts`,
       `src/components/motion/`)
