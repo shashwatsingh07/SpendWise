@@ -9,6 +9,7 @@ import Analytics from './pages/Analytics'
 import Budgets from './pages/Budgets'
 import Goals from './pages/Goals'
 import Recurring from './pages/Recurring'
+import NetWorth from './pages/NetWorth'
 import AIAssistant from './pages/AIAssistant'
 import Import from './pages/Import'
 import Settings from './pages/Settings'
@@ -34,6 +35,7 @@ export default function App() {
             <Route path="budgets" element={<Budgets />} />
             <Route path="goals" element={<Goals />} />
             <Route path="recurring" element={<Recurring />} />
+            <Route path="net-worth" element={<NetWorth />} />
             <Route path="ai" element={<AIAssistant />} />
             <Route path="import" element={<Import />} />
             <Route path="settings" element={<Settings />} />

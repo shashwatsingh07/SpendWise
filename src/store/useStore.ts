@@ -1,8 +1,9 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { Transaction, Budget, Category, SavingsGoal, AppSettings } from '../types'
+import { Transaction, Budget, Category, SavingsGoal, AppSettings, Account } from '../types'
 import { DEFAULT_CATEGORIES } from '../data/categories'
 import { SAMPLE_TRANSACTIONS, SAMPLE_BUDGETS, SAMPLE_GOALS } from '../data/sampleData'
+import { SAMPLE_ACCOUNTS } from '../data/accounts'
 import { v4 as uuid } from 'uuid'
 
 interface StoreState {
@@ -10,6 +11,7 @@ interface StoreState {
   budgets: Budget[]
   categories: Category[]
   goals: SavingsGoal[]
+  accounts: Account[]
   settings: AppSettings
 
   // Import undo: ids added by the most recent bulk import
@@ -33,6 +35,12 @@ interface StoreState {
   updateGoal: (id: string, g: Partial<SavingsGoal>) => void
   deleteGoal: (id: string) => void
 
+  // Account actions (net worth)
+  addAccount: (a: Omit<Account, 'id' | 'createdAt'>) => void
+  updateAccount: (id: string, a: Partial<Account>) => void
+  deleteAccount: (id: string) => void
+  getNetWorth: () => { assets: number; liabilities: number; net: number }
+
   // Settings
   updateSettings: (s: Partial<AppSettings>) => void
 
@@ -50,6 +58,7 @@ export const useStore = create<StoreState>()(
       budgets: SAMPLE_BUDGETS,
       categories: DEFAULT_CATEGORIES,
       goals: SAMPLE_GOALS,
+      accounts: SAMPLE_ACCOUNTS,
       lastImportIds: [],
       settings: {
         currency: 'INR',
@@ -129,6 +138,22 @@ export const useStore = create<StoreState>()(
       deleteGoal: (id) =>
         set(s => ({ goals: s.goals.filter(g => g.id !== id) })),
 
+      addAccount: (a) =>
+        set(s => ({ accounts: [...s.accounts, { ...a, id: uuid(), createdAt: new Date().toISOString() }] })),
+
+      updateAccount: (id, a) =>
+        set(s => ({ accounts: s.accounts.map(acc => (acc.id === id ? { ...acc, ...a } : acc)) })),
+
+      deleteAccount: (id) =>
+        set(s => ({ accounts: s.accounts.filter(acc => acc.id !== id) })),
+
+      getNetWorth: () => {
+        const { accounts } = get()
+        const assets = accounts.filter(a => a.kind === 'asset').reduce((s, a) => s + a.balance, 0)
+        const liabilities = accounts.filter(a => a.kind === 'liability').reduce((s, a) => s + a.balance, 0)
+        return { assets, liabilities, net: assets - liabilities }
+      },
+
       updateSettings: (s) =>
         set(state => ({ settings: { ...state.settings, ...s } })),
 
@@ -183,6 +208,7 @@ export const useStore = create<StoreState>()(
         budgets: state.budgets,
         categories: state.categories,
         goals: state.goals,
+        accounts: state.accounts,
         settings: state.settings,
         lastImportIds: state.lastImportIds,
       }),

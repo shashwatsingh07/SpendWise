@@ -68,6 +68,20 @@ export interface SavingsGoal {
   createdAt: string
 }
 
+export type AccountKind = 'asset' | 'liability'
+
+// An asset (cash, bank, investments, property…) or liability (loan, card…)
+// used by the Net Worth tracker.
+export interface Account {
+  id: string
+  name: string
+  kind: AccountKind
+  category: string // matches an ACCOUNT_TYPES id
+  balance: number // current value / amount owed (always stored positive)
+  icon: string
+  createdAt: string
+}
+
 export interface AppSettings {
   currency: string
   currencySymbol: string

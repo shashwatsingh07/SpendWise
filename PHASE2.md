@@ -14,8 +14,10 @@
       `isRecurring` transactions: monthly-normalized cost, yearly projection,
       next-renewal estimate, subscriptions vs other-recurring split, totals.
       Nav + route. (`src/pages/Recurring.tsx`, `Layout.tsx`, `App.tsx`)
-- [ ] **2. Net Worth Tracker** — new store slice for accounts (assets +
-      liabilities), `/net-worth` page with net-worth total, breakdown, add/edit.
+- [x] **2. Net Worth Tracker** — new `accounts` store slice (assets +
+      liabilities) + `/net-worth` page: animated net-worth total, asset/liability
+      ratio bar, totals, per-column add/edit/delete with kind-aware form.
+      (`src/data/accounts.ts`, `src/pages/NetWorth.tsx`, store, nav, route)
 - [ ] **3. Tags** — tag overview + filter UX (tags already stored on
       transactions); per-tag totals on a tag detail / Analytics surface.
 - [ ] **4. Multi-Currency** — log in any currency, convert to base for totals
