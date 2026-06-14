@@ -39,18 +39,24 @@ SpendWise is a privacy-first expense tracker that works the way Indian users act
 - ⏳ *Remaining:* packaging the signed Android APK — see **[ANDROID.md](ANDROID.md)**
 
 ### 🏠 Core App
-- **Dashboard** — 6-month spend chart, budget alerts, savings goal progress, recent transactions
-- **Transactions** — full list with search, filter, mood tracking
-- **Analytics** — category pie chart, monthly income/expense bars, mood analysis
+- **Dashboard** — 6-month spend chart, budget alerts, savings goal progress, recent transactions, and a "bills due soon" nudge
+- **Transactions** — full list with search, filter, mood tracking, and tag filtering (`?tag=`)
+- **Analytics** — category pie chart, monthly income/expense bars, mood analysis, and a GitHub-style **expense heatmap**
 - **Budgets** — per-category limits with alert thresholds
 - **Goals** — savings goals with progress tracking
+- **Recurring & Subscriptions** — every repeating charge normalized to a monthly cost, with renewal estimates and upcoming-bill reminders
+- **Net Worth** — assets − liabilities with an animated total and per-account breakdown
+- **Tags** — per-tag spend totals that drill into filtered transactions
+- **Splits** — split any expense with people, track who owes you, and settle up
 - **AI Assistant** — ask questions about your spending (requires Claude API key)
-- **Dark mode** + INR/multi-currency support
+- **Multi-currency** — log transactions in any of 8 currencies; all totals convert to your base currency
+- **Premium dark-first UI** — full framer-motion polish, toasts, skeleton loaders, and import confetti
 
 ### 🔜 Coming Soon
-- **Phase 3** — Live bank feed via Setu / Finvu Account Aggregator (RBI-licensed)
-- **Phase 4** — AI enrichment: decode cryptic descriptions, spend pattern alerts, receipt OCR
-- **Phase 5** — WhatsApp bot, split bill tracker, tax slab estimator, net worth tracker
+- **AI deepening** — natural-language expense entry, smart auto-categorization, anomaly detection, financial health score
+- **Differentiators** — carbon footprint, gamification/streaks, wealth projection, AI PDF reports
+- **Live bank feed** via Setu / Finvu Account Aggregator (RBI-licensed) + receipt OCR
+- **PWA** — installable, offline-first; WhatsApp bot; tax slab estimator
 
 ---
 
@@ -114,14 +120,20 @@ src/
 │   ├── Analytics.tsx
 │   ├── Budgets.tsx
 │   ├── Goals.tsx
+│   ├── Recurring.tsx        # Recurring & subscriptions + upcoming bills
+│   ├── NetWorth.tsx         # Assets − liabilities tracker
+│   ├── Tags.tsx             # Per-tag spend overview
+│   ├── Splits.tsx           # Split expenses + settle-up
 │   ├── AIAssistant.tsx
 │   └── Settings.tsx
 ├── store/
-│   └── useStore.ts          # Zustand store (transactions, budgets, goals, settings)
+│   └── useStore.ts          # Zustand store (transactions, budgets, goals, accounts, settings)
 ├── types/
 │   └── index.ts
 └── data/
     ├── categories.ts
+    ├── currencies.ts        # Multi-currency rate table + convert()
+    ├── accounts.ts          # Net-worth account types + samples
     ├── sampleData.ts
     └── sampleSms.ts         # [P2] Demo SMS for browser testing
 ```
