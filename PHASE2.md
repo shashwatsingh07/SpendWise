@@ -25,8 +25,9 @@
       `convertCurrency`. Per-transaction currency selector in the modal; every
       aggregation (store helpers, Dashboard, Analytics, Recurring, heatmap, AI
       context, Transactions net) converts to base; rows show original currency.
-- [ ] **5. Split Expense** — track who owes what on a transaction
-      (`splitWith` already on the model); settle-up view.
+- [x] **5. Split Expense** — `splitWith` + new `splitSettled` on the model;
+      modal "Split with" field with live per-person share preview; `/splits`
+      page with owed-to-you total, per-person settle-up, and settle toggle.
 - [ ] **6. Bill Reminders** — upcoming-bill list derived from recurring items,
       due-soon highlighting on the dashboard.
 

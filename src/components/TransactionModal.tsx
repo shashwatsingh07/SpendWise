@@ -4,7 +4,7 @@ import { X, Sparkles, Loader2 } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { useToast } from './Toast'
 import { DEFAULT_CATEGORIES } from '../data/categories'
-import { CURRENCIES } from '../data/currencies'
+import { CURRENCIES, currencySymbol } from '../data/currencies'
 import { Transaction, Mood } from '../types'
 import { cn } from '../lib/utils'
 
@@ -35,6 +35,7 @@ export function TransactionModal({ onClose, transaction }: Props) {
   )
   const [mood, setMood] = useState<Mood | undefined>(transaction?.mood)
   const [tags, setTags] = useState(transaction?.tags?.join(', ') ?? '')
+  const [splitWith, setSplitWith] = useState(transaction?.splitWith?.join(', ') ?? '')
   const [isRecurring, setIsRecurring] = useState(transaction?.isRecurring ?? false)
   const [taxDeductible, setTaxDeductible] = useState(transaction?.taxDeductible ?? false)
   const [aiLoading, setAiLoading] = useState(false)
@@ -64,6 +65,7 @@ export function TransactionModal({ onClose, transaction }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const tagArr = tags.split(',').map(t => t.trim()).filter(Boolean)
+    const splitArr = type === 'expense' ? splitWith.split(',').map(s => s.trim()).filter(Boolean) : []
     const data = {
       type,
       amount: parseFloat(amount),
@@ -76,6 +78,8 @@ export function TransactionModal({ onClose, transaction }: Props) {
       mood,
       isRecurring,
       taxDeductible,
+      splitWith: splitArr,
+      splitSettled: splitArr.length > 0 ? (transaction?.splitSettled ?? false) : undefined,
     }
     if (transaction) {
       updateTransaction(transaction.id, data)
@@ -229,6 +233,29 @@ export function TransactionModal({ onClose, transaction }: Props) {
             <label className="label">Tags (comma separated)</label>
             <input className="input" placeholder="#work, #lunch" value={tags} onChange={e => setTags(e.target.value)} />
           </div>
+
+          {/* Split */}
+          {type === 'expense' && (
+            <div>
+              <label className="label">Split with (comma-separated names)</label>
+              <input className="input" placeholder="e.g. Aarav, Priya" value={splitWith} onChange={e => setSplitWith(e.target.value)} />
+              {(() => {
+                const people = splitWith.split(',').map(s => s.trim()).filter(Boolean)
+                const amt = parseFloat(amount)
+                if (people.length === 0 || !amt) return null
+                const share = amt / (people.length + 1)
+                return (
+                  <p className="text-xs text-slate-400 mt-1.5">
+                    Split {people.length + 1} ways · each pays{' '}
+                    <span className="font-medium text-slate-600 dark:text-slate-300">
+                      {currencySymbol(currency)}{Math.round(share).toLocaleString('en-IN')}
+                    </span>{' '}
+                    · {people.length} owe you {currencySymbol(currency)}{Math.round(share * people.length).toLocaleString('en-IN')}
+                  </p>
+                )
+              })()}
+            </div>
+          )}
 
           {/* Mood */}
           {type === 'expense' && (

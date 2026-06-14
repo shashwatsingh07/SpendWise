@@ -21,7 +21,8 @@ export interface Transaction {
   recurringInterval?: RecurringInterval
   receiptUrl?: string
   taxDeductible: boolean
-  splitWith?: string[]
+  splitWith?: string[] // names of people the expense is split with (equal split)
+  splitSettled?: boolean // whether others have paid you back their share
   importSource?: ImportSource
   createdAt: string
 }
