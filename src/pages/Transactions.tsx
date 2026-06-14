@@ -4,6 +4,7 @@ import { Search, Filter, Trash2, Edit2, Plus, Tag, SlidersHorizontal } from 'luc
 import { useStore } from '../store/useStore'
 import { useToast } from '../components/Toast'
 import { getCategoryById, DEFAULT_CATEGORIES } from '../data/categories'
+import { currencySymbol, convertCurrency } from '../data/currencies'
 import { formatCurrencyFull, formatDate, getMoodEmoji } from '../lib/utils'
 import { TransactionModal } from '../components/TransactionModal'
 import { Transaction } from '../types'
@@ -43,7 +44,10 @@ export default function Transactions() {
       })
   }, [transactions, search, typeFilter, categoryFilter, sortBy])
 
-  const totalFiltered = filtered.reduce((sum, t) => (t.type === 'expense' ? sum - t.amount : sum + t.amount), 0)
+  const totalFiltered = filtered.reduce((sum, t) => {
+    const base = convertCurrency(t.amount, t.currency, settings.currency)
+    return t.type === 'expense' ? sum - base : sum + base
+  }, 0)
 
   return (
     <motion.div variants={staggerContainer} initial="hidden" animate="show" className="p-6 max-w-5xl mx-auto space-y-5">
@@ -181,7 +185,7 @@ export default function Transactions() {
 
                   {/* Amount */}
                   <span className={`text-sm font-bold tabular-nums ${tx.type === 'expense' ? 'text-rose-500 dark:text-rose-400' : 'text-emerald-500 dark:text-emerald-400'}`}>
-                    {tx.type === 'expense' ? '-' : '+'}{formatCurrencyFull(tx.amount, settings.currencySymbol)}
+                    {tx.type === 'expense' ? '-' : '+'}{formatCurrencyFull(tx.amount, currencySymbol(tx.currency))}
                   </span>
 
                   {/* Actions */}

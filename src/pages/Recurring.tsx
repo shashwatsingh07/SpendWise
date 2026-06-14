@@ -4,6 +4,7 @@ import { Repeat, CalendarClock, TrendingUp, Layers } from 'lucide-react'
 import { format, differenceInCalendarDays } from 'date-fns'
 import { useStore } from '../store/useStore'
 import { getCategoryById } from '../data/categories'
+import { currencySymbol, convertCurrency } from '../data/currencies'
 import { formatCurrencyFull } from '../lib/utils'
 import { staggerContainer, fadeUp, scaleIn } from '../lib/motion'
 import { RecurringInterval, Transaction } from '../types'
@@ -50,7 +51,8 @@ export default function Recurring() {
       .filter(t => t.isRecurring)
       .map(t => {
         const interval = t.recurringInterval ?? 'monthly'
-        return { tx: t, interval, monthly: toMonthly(t.amount, interval), next: nextRenewal(t.date, interval) }
+        const baseAmount = convertCurrency(t.amount, t.currency, settings.currency)
+        return { tx: t, interval, monthly: toMonthly(baseAmount, interval), next: nextRenewal(t.date, interval) }
       })
 
     const expense = recurring.filter(r => r.tx.type === 'expense')
@@ -67,7 +69,7 @@ export default function Recurring() {
       .reduce((s, r) => s + r.monthly, 0)
 
     return { subs, other, monthlyTotal, monthlyIncome }
-  }, [transactions])
+  }, [transactions, settings.currency])
 
   const incomePct = settings.monthlyIncome > 0 ? Math.round((monthlyTotal / settings.monthlyIncome) * 100) : 0
   const isEmpty = subs.length === 0 && other.length === 0
@@ -122,7 +124,7 @@ export default function Recurring() {
           {subs.length > 0 && (
             <Section title="Subscriptions" count={subs.length}>
               {subs.map(r => (
-                <RecurringRow key={r.tx.id} tx={r.tx} interval={r.interval} monthly={r.monthly} next={r.next} sym={sym} />
+                <RecurringRow key={r.tx.id} tx={r.tx} interval={r.interval} monthly={r.monthly} next={r.next} sym={sym} base={settings.currency} />
               ))}
             </Section>
           )}
@@ -131,7 +133,7 @@ export default function Recurring() {
           {other.length > 0 && (
             <Section title="Other recurring" count={other.length}>
               {other.map(r => (
-                <RecurringRow key={r.tx.id} tx={r.tx} interval={r.interval} monthly={r.monthly} next={r.next} sym={sym} />
+                <RecurringRow key={r.tx.id} tx={r.tx} interval={r.interval} monthly={r.monthly} next={r.next} sym={sym} base={settings.currency} />
               ))}
             </Section>
           )}
@@ -172,8 +174,8 @@ function Section({ title, count, children }: { title: string; count: number; chi
   )
 }
 
-function RecurringRow({ tx, interval, monthly, next, sym }: {
-  tx: Transaction; interval: RecurringInterval; monthly: number; next: Date; sym: string
+function RecurringRow({ tx, interval, monthly, next, sym, base }: {
+  tx: Transaction; interval: RecurringInterval; monthly: number; next: Date; sym: string; base: string
 }) {
   const cat = getCategoryById(tx.category)
   const daysLeft = differenceInCalendarDays(next, new Date())
@@ -197,10 +199,10 @@ function RecurringRow({ tx, interval, monthly, next, sym }: {
       </div>
       <div className="text-right">
         <p className="text-sm font-bold text-slate-700 dark:text-slate-200 tabular-nums">
-          {formatCurrencyFull(tx.amount, sym)}
+          {formatCurrencyFull(tx.amount, currencySymbol(tx.currency))}
           <span className="text-xs font-normal text-slate-400">{INTERVAL_LABEL[interval]}</span>
         </p>
-        {interval !== 'monthly' && (
+        {(interval !== 'monthly' || tx.currency !== base) && (
           <p className="text-xs text-slate-400 tabular-nums">≈ {formatCurrencyFull(Math.round(monthly), sym)}/mo</p>
         )}
       </div>

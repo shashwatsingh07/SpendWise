@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Send, Sparkles, Bot, User, TrendingDown, AlertCircle, Lightbulb } from 'lucide-react'
 import { useStore } from '../store/useStore'
+import { convertCurrency } from '../data/currencies'
 import { Skeleton } from '../components/Skeleton'
 import { getCategoryById } from '../data/categories'
 import { formatCurrencyFull } from '../lib/utils'
@@ -45,18 +46,19 @@ export default function AIAssistant() {
     const y = now.getFullYear()
     const m = now.getMonth()
 
+    const toBase = (t: { amount: number; currency: string }) => convertCurrency(t.amount, t.currency, settings.currency)
     const monthlyExpenses = transactions
       .filter(t => { const d = new Date(t.date); return t.type === 'expense' && d.getFullYear() === y && d.getMonth() === m })
-      .reduce((s, t) => s + t.amount, 0)
+      .reduce((s, t) => s + toBase(t), 0)
     const monthlyIncome = transactions
       .filter(t => { const d = new Date(t.date); return t.type === 'income' && d.getFullYear() === y && d.getMonth() === m })
-      .reduce((s, t) => s + t.amount, 0)
+      .reduce((s, t) => s + toBase(t), 0)
 
     // Category breakdown
     const categoryMap: Record<string, number> = {}
     transactions
       .filter(t => { const d = new Date(t.date); return t.type === 'expense' && d.getFullYear() === y && d.getMonth() === m })
-      .forEach(t => { categoryMap[t.category] = (categoryMap[t.category] ?? 0) + t.amount })
+      .forEach(t => { categoryMap[t.category] = (categoryMap[t.category] ?? 0) + toBase(t) })
     const topCategories = Object.entries(categoryMap)
       .sort(([, a], [, b]) => b - a)
       .slice(0, 5)

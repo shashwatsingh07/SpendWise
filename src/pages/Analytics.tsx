@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useStore } from '../store/useStore'
 import { getCategoryById } from '../data/categories'
+import { convertCurrency } from '../data/currencies'
 import { formatCurrencyFull, formatCurrency, getLast6Months } from '../lib/utils'
 import { GlassTooltip } from '../components/ChartTooltip'
 import { ExpenseHeatmap } from '../components/ExpenseHeatmap'
@@ -29,29 +30,30 @@ export default function Analytics() {
       const d = new Date(t.date)
       return t.type === 'expense' && d.getFullYear() === y && d.getMonth() === m
     })
-    const total = thisMonth.reduce((s, t) => s + t.amount, 0)
+    const base = (t: typeof thisMonth[number]) => convertCurrency(t.amount, t.currency, settings.currency)
+    const total = thisMonth.reduce((s, t) => s + base(t), 0)
     const map: Record<string, number> = {}
-    thisMonth.forEach(t => { map[t.category] = (map[t.category] ?? 0) + t.amount })
+    thisMonth.forEach(t => { map[t.category] = (map[t.category] ?? 0) + base(t) })
     return Object.entries(map)
       .map(([cat, amount]) => {
         const c = getCategoryById(cat)
         return { name: c.name, value: amount, color: c.color, icon: c.icon, percentage: total > 0 ? Math.round((amount / total) * 100) : 0 }
       })
       .sort((a, b) => b.value - a.value)
-  }, [transactions, y, m])
+  }, [transactions, y, m, settings.currency])
 
   // Monthly bar data (last 6 months)
   const monthlyData = useMemo(() => {
     return getLast6Months().map(({ year, month, label }) => {
       const income = transactions
         .filter(t => { const d = new Date(t.date); return t.type === 'income' && d.getFullYear() === year && d.getMonth() === month })
-        .reduce((s, t) => s + t.amount, 0)
+        .reduce((s, t) => s + convertCurrency(t.amount, t.currency, settings.currency), 0)
       const expenses = transactions
         .filter(t => { const d = new Date(t.date); return t.type === 'expense' && d.getFullYear() === year && d.getMonth() === month })
-        .reduce((s, t) => s + t.amount, 0)
+        .reduce((s, t) => s + convertCurrency(t.amount, t.currency, settings.currency), 0)
       return { label, income, expenses, savings: income - expenses }
     })
-  }, [transactions])
+  }, [transactions, settings.currency])
 
   // Daily spending (current month)
   const dailyData = useMemo(() => {
@@ -60,21 +62,21 @@ export default function Analytics() {
       .filter(t => { const d = new Date(t.date); return t.type === 'expense' && d.getFullYear() === y && d.getMonth() === m })
       .forEach(t => {
         const day = new Date(t.date).getDate()
-        days[day] = (days[day] ?? 0) + t.amount
+        days[day] = (days[day] ?? 0) + convertCurrency(t.amount, t.currency, settings.currency)
       })
     return Object.entries(days).sort(([a], [b]) => +a - +b).map(([day, amount]) => ({ day: `${day}`, amount }))
-  }, [transactions, y, m])
+  }, [transactions, y, m, settings.currency])
 
   // Mood spending analysis
   const moodData = useMemo(() => {
     const map: Record<string, number> = {}
     transactions.filter(t => t.type === 'expense' && t.mood).forEach(t => {
-      map[t.mood!] = (map[t.mood!] ?? 0) + t.amount
+      map[t.mood!] = (map[t.mood!] ?? 0) + convertCurrency(t.amount, t.currency, settings.currency)
     })
     const labels: Record<string, string> = { happy: '😊 Happy', neutral: '😐 Neutral', stressed: '😰 Stressed', impulsive: '😬 Impulsive' }
     const colors: Record<string, string> = { happy: '#22c55e', neutral: '#64748b', stressed: '#ef4444', impulsive: '#f97316' }
     return Object.entries(map).map(([mood, amount]) => ({ name: labels[mood] ?? mood, value: amount, color: colors[mood] ?? '#64748b' }))
-  }, [transactions])
+  }, [transactions, settings.currency])
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { TrendingUp, TrendingDown, Wallet, ArrowUpRight, Sparkles, Plus } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { getCategoryById } from '../data/categories'
+import { currencySymbol } from '../data/currencies'
 import { formatCurrency, formatCurrencyFull, formatDateShort, getLast6Months, getProgressGradient } from '../lib/utils'
 import { TransactionModal } from '../components/TransactionModal'
 import { GlassTooltip } from '../components/ChartTooltip'
@@ -179,7 +180,7 @@ export default function Dashboard() {
                   </div>
                   {tx.mood && <span className="text-base">{getMoodEmoji(tx.mood)}</span>}
                   <span className={`text-sm font-semibold tabular-nums ${tx.type === 'expense' ? 'text-rose-400' : 'text-emerald-400'}`}>
-                    {tx.type === 'expense' ? '-' : '+'}{formatCurrency(tx.amount, settings.currencySymbol)}
+                    {tx.type === 'expense' ? '-' : '+'}{formatCurrency(tx.amount, currencySymbol(tx.currency))}
                   </span>
                 </motion.div>
               )

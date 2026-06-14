@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { format } from 'date-fns'
 import { useStore } from '../store/useStore'
+import { convertCurrency } from '../data/currencies'
 import { formatCurrencyFull } from '../lib/utils'
 
 const WEEKS = 18 // ~4 months of history
@@ -39,7 +40,7 @@ export function ExpenseHeatmap() {
     transactions.forEach(t => {
       if (t.type !== 'expense') return
       const key = t.date.slice(0, 10)
-      map[key] = (map[key] ?? 0) + t.amount
+      map[key] = (map[key] ?? 0) + convertCurrency(t.amount, t.currency, settings.currency)
     })
 
     const today = new Date()
@@ -74,7 +75,7 @@ export function ExpenseHeatmap() {
     })
 
     return { weeks, max, monthCols }
-  }, [transactions])
+  }, [transactions, settings.currency])
 
   return (
     <div>

@@ -20,8 +20,10 @@
       (`src/data/accounts.ts`, `src/pages/NetWorth.tsx`, store, nav, route)
 - [ ] **3. Tags** — tag overview + filter UX (tags already stored on
       transactions); per-tag totals on a tag detail / Analytics surface.
-- [ ] **4. Multi-Currency** — log in any currency, convert to base for totals
-      (static rate table + editable rates in Settings).
+- [x] **4. Multi-Currency** — `src/data/currencies.ts` static-rate table +
+      `convertCurrency`. Per-transaction currency selector in the modal; every
+      aggregation (store helpers, Dashboard, Analytics, Recurring, heatmap, AI
+      context, Transactions net) converts to base; rows show original currency.
 - [ ] **5. Split Expense** — track who owes what on a transaction
       (`splitWith` already on the model); settle-up view.
 - [ ] **6. Bill Reminders** — upcoming-bill list derived from recurring items,

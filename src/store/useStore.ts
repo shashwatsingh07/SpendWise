@@ -4,6 +4,7 @@ import { Transaction, Budget, Category, SavingsGoal, AppSettings, Account } from
 import { DEFAULT_CATEGORIES } from '../data/categories'
 import { SAMPLE_TRANSACTIONS, SAMPLE_BUDGETS, SAMPLE_GOALS } from '../data/sampleData'
 import { SAMPLE_ACCOUNTS } from '../data/accounts'
+import { convertCurrency } from '../data/currencies'
 import { v4 as uuid } from 'uuid'
 
 interface StoreState {
@@ -158,27 +159,27 @@ export const useStore = create<StoreState>()(
         set(state => ({ settings: { ...state.settings, ...s } })),
 
       getMonthlyExpenses: (year, month) => {
-        const { transactions } = get()
+        const { transactions, settings } = get()
         return transactions
           .filter(t => {
             const d = new Date(t.date)
             return t.type === 'expense' && d.getFullYear() === year && d.getMonth() === month
           })
-          .reduce((sum, t) => sum + t.amount, 0)
+          .reduce((sum, t) => sum + convertCurrency(t.amount, t.currency, settings.currency), 0)
       },
 
       getMonthlyIncome: (year, month) => {
-        const { transactions } = get()
+        const { transactions, settings } = get()
         return transactions
           .filter(t => {
             const d = new Date(t.date)
             return t.type === 'income' && d.getFullYear() === year && d.getMonth() === month
           })
-          .reduce((sum, t) => sum + t.amount, 0)
+          .reduce((sum, t) => sum + convertCurrency(t.amount, t.currency, settings.currency), 0)
       },
 
       getCategorySpend: (categoryId, year, month) => {
-        const { transactions } = get()
+        const { transactions, settings } = get()
         return transactions
           .filter(t => {
             const d = new Date(t.date)
@@ -189,7 +190,7 @@ export const useStore = create<StoreState>()(
               d.getMonth() === month
             )
           })
-          .reduce((sum, t) => sum + t.amount, 0)
+          .reduce((sum, t) => sum + convertCurrency(t.amount, t.currency, settings.currency), 0)
       },
 
       getBudgetUsage: (budgetId) => {

@@ -3,15 +3,8 @@ import { motion } from 'framer-motion'
 import { Save, Eye, EyeOff, Moon, Sun } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { useToast } from '../components/Toast'
+import { CURRENCIES } from '../data/currencies'
 import { staggerContainer, fadeUp } from '../lib/motion'
-
-const CURRENCIES = [
-  { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
-  { code: 'USD', symbol: '$', name: 'US Dollar' },
-  { code: 'EUR', symbol: '€', name: 'Euro' },
-  { code: 'GBP', symbol: '£', name: 'British Pound' },
-  { code: 'JPY', symbol: '¥', name: 'Japanese Yen' },
-]
 
 export default function Settings() {
   const { settings, updateSettings } = useStore()

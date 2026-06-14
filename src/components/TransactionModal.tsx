@@ -4,6 +4,7 @@ import { X, Sparkles, Loader2 } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { useToast } from './Toast'
 import { DEFAULT_CATEGORIES } from '../data/categories'
+import { CURRENCIES } from '../data/currencies'
 import { Transaction, Mood } from '../types'
 import { cn } from '../lib/utils'
 
@@ -25,6 +26,7 @@ export function TransactionModal({ onClose, transaction }: Props) {
 
   const [type, setType] = useState<'expense' | 'income'>(transaction?.type ?? 'expense')
   const [amount, setAmount] = useState(transaction?.amount?.toString() ?? '')
+  const [currency, setCurrency] = useState(transaction?.currency ?? settings.currency)
   const [category, setCategory] = useState(transaction?.category ?? 'food')
   const [merchant, setMerchant] = useState(transaction?.merchant ?? '')
   const [note, setNote] = useState(transaction?.note ?? '')
@@ -65,7 +67,7 @@ export function TransactionModal({ onClose, transaction }: Props) {
     const data = {
       type,
       amount: parseFloat(amount),
-      currency: settings.currency,
+      currency,
       category,
       merchant,
       note,
@@ -155,15 +157,25 @@ export function TransactionModal({ onClose, transaction }: Props) {
           {/* Amount + Date */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="label">Amount ({settings.currencySymbol})</label>
-              <input
-                type="number"
-                className="input"
-                placeholder="0.00"
-                value={amount}
-                onChange={e => setAmount(e.target.value)}
-                required
-              />
+              <label className="label">Amount</label>
+              <div className="flex gap-2">
+                <input
+                  type="number"
+                  className="input flex-1"
+                  placeholder="0.00"
+                  value={amount}
+                  onChange={e => setAmount(e.target.value)}
+                  required
+                />
+                <select
+                  className="input w-20 px-2"
+                  value={currency}
+                  onChange={e => setCurrency(e.target.value)}
+                  title="Currency"
+                >
+                  {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}
+                </select>
+              </div>
             </div>
             <div>
               <label className="label">Date</label>
