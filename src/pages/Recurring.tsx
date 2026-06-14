@@ -1,11 +1,12 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { Repeat, CalendarClock, TrendingUp, Layers } from 'lucide-react'
+import { Repeat, CalendarClock, TrendingUp, Layers, BellRing } from 'lucide-react'
 import { format, differenceInCalendarDays } from 'date-fns'
 import { useStore } from '../store/useStore'
 import { getCategoryById } from '../data/categories'
 import { currencySymbol, convertCurrency } from '../data/currencies'
 import { formatCurrencyFull } from '../lib/utils'
+import { nextRenewal } from '../lib/recurring'
 import { staggerContainer, fadeUp, scaleIn } from '../lib/motion'
 import { RecurringInterval, Transaction } from '../types'
 
@@ -27,26 +28,11 @@ function toMonthly(amount: number, interval: RecurringInterval) {
   return amount * MONTHLY_FACTOR[interval]
 }
 
-/** Next occurrence on/after today, stepping forward from the last logged date. */
-function nextRenewal(dateISO: string, interval: RecurringInterval): Date {
-  const next = new Date(dateISO)
-  const now = new Date()
-  now.setHours(0, 0, 0, 0)
-  let guard = 0
-  while (next < now && guard++ < 1000) {
-    if (interval === 'daily') next.setDate(next.getDate() + 1)
-    else if (interval === 'weekly') next.setDate(next.getDate() + 7)
-    else if (interval === 'monthly') next.setMonth(next.getMonth() + 1)
-    else next.setFullYear(next.getFullYear() + 1)
-  }
-  return next
-}
-
 export default function Recurring() {
   const { transactions, settings } = useStore()
   const sym = settings.currencySymbol
 
-  const { subs, other, monthlyTotal, monthlyIncome } = useMemo(() => {
+  const { subs, other, monthlyTotal, monthlyIncome, upcoming } = useMemo(() => {
     const recurring = transactions
       .filter(t => t.isRecurring)
       .map(t => {
@@ -68,7 +54,14 @@ export default function Recurring() {
       .filter(r => r.tx.type === 'income')
       .reduce((s, r) => s + r.monthly, 0)
 
-    return { subs, other, monthlyTotal, monthlyIncome }
+    // Bills due within the next 14 days, soonest first.
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const upcoming = expense
+      .filter(r => differenceInCalendarDays(r.next, today) <= 14)
+      .sort((a, b) => a.next.getTime() - b.next.getTime())
+
+    return { subs, other, monthlyTotal, monthlyIncome, upcoming }
   }, [transactions, settings.currency])
 
   const incomePct = settings.monthlyIncome > 0 ? Math.round((monthlyTotal / settings.monthlyIncome) * 100) : 0
@@ -119,6 +112,43 @@ export default function Recurring() {
               gradient="from-emerald-500 to-teal-600"
             />
           </motion.div>
+
+          {/* Upcoming bills */}
+          {upcoming.length > 0 && (
+            <motion.div variants={fadeUp}>
+              <div className="flex items-center gap-2 mb-3">
+                <BellRing size={16} className="text-amber-500" />
+                <h2 className="font-semibold text-slate-700 dark:text-slate-200">Upcoming bills</h2>
+                <span className="text-xs text-slate-400">next 14 days</span>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {upcoming.map(r => {
+                  const cat = getCategoryById(r.tx.category)
+                  const days = differenceInCalendarDays(r.next, new Date())
+                  const soon = days <= 3
+                  return (
+                    <div
+                      key={r.tx.id}
+                      className={`card p-4 flex items-center gap-3 ${soon ? 'border-amber-300/50 dark:border-amber-400/30 bg-amber-50/40 dark:bg-amber-500/[0.07]' : ''}`}
+                    >
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0" style={{ background: `${cat.color}22` }}>
+                        {cat.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">{r.tx.merchant || cat.name}</p>
+                        <p className={`text-xs mt-0.5 ${soon ? 'text-amber-600 dark:text-amber-400 font-medium' : 'text-slate-400'}`}>
+                          {days <= 0 ? 'Due today' : days === 1 ? 'Due tomorrow' : `Due in ${days} days`} · {format(r.next, 'dd MMM')}
+                        </p>
+                      </div>
+                      <span className="text-sm font-bold text-slate-700 dark:text-slate-200 tabular-nums">
+                        {formatCurrencyFull(r.tx.amount, currencySymbol(r.tx.currency))}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+            </motion.div>
+          )}
 
           {/* Subscriptions */}
           {subs.length > 0 && (

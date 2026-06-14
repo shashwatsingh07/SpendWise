@@ -1,9 +1,11 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { TrendingUp, TrendingDown, Wallet, ArrowUpRight, Sparkles, Plus } from 'lucide-react'
+import { TrendingUp, TrendingDown, Wallet, ArrowUpRight, Sparkles, Plus, BellRing, ChevronRight } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { getCategoryById } from '../data/categories'
-import { currencySymbol } from '../data/currencies'
+import { currencySymbol, convertCurrency } from '../data/currencies'
+import { upcomingBills } from '../lib/recurring'
 import { formatCurrency, formatCurrencyFull, formatDateShort, getLast6Months, getProgressGradient } from '../lib/utils'
 import { TransactionModal } from '../components/TransactionModal'
 import { GlassTooltip } from '../components/ChartTooltip'
@@ -45,6 +47,10 @@ export default function Dashboard() {
 
   // Top spending goals progress
   const topGoals = goals.slice(0, 3)
+
+  // Bills due within the next 3 days (actionable nudge)
+  const dueSoon = upcomingBills(transactions, 3)
+  const dueSoonTotal = dueSoon.reduce((s, b) => s + convertCurrency(b.tx.amount, b.tx.currency, settings.currency), 0)
 
   return (
     <motion.div
@@ -99,6 +105,27 @@ export default function Dashboard() {
           sub={savingsRate >= 20 ? 'Great job! Above 20%' : 'Target: 20%'}
         />
       </motion.div>
+
+      {/* Bills due soon nudge */}
+      {dueSoon.length > 0 && (
+        <motion.div variants={fadeUp}>
+          <Link to="/recurring" className="card card-hover p-4 flex items-center gap-3 border-amber-300/50 dark:border-amber-400/30 bg-amber-50/50 dark:bg-amber-500/[0.08] group">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center flex-shrink-0">
+              <BellRing size={16} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-slate-800 dark:text-slate-100">
+                {dueSoon.length} bill{dueSoon.length > 1 ? 's' : ''} due in the next 3 days
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                {dueSoon.slice(0, 3).map(b => b.tx.merchant || getCategoryById(b.tx.category).name).join(', ')}
+                {' · '}{formatCurrencyFull(Math.round(dueSoonTotal), settings.currencySymbol)} total
+              </p>
+            </div>
+            <ChevronRight size={18} className="text-amber-500 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+        </motion.div>
+      )}
 
       <motion.div variants={staggerContainer} className="grid grid-cols-3 gap-4">
         {/* Trend Chart */}

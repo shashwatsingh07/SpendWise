@@ -28,8 +28,14 @@
 - [x] **5. Split Expense** — `splitWith` + new `splitSettled` on the model;
       modal "Split with" field with live per-person share preview; `/splits`
       page with owed-to-you total, per-person settle-up, and settle toggle.
-- [ ] **6. Bill Reminders** — upcoming-bill list derived from recurring items,
-      due-soon highlighting on the dashboard.
+- [x] **6. Bill Reminders** — `src/lib/recurring.ts` shared `nextRenewal` +
+      `upcomingBills`; "Upcoming bills (next 14 days)" section on Recurring with
+      due-soon highlighting, and a conditional "bills due in 3 days" nudge on the
+      Dashboard linking to /recurring.
+
+---
+
+## ✅ Phase 2 complete — all 6 chunks done
 
 ---
 
