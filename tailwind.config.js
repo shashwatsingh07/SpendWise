@@ -67,8 +67,6 @@ export default {
           '0%, 100%': { opacity: 0.85 },
           '50%': { opacity: 1 },
         },
-      },
-      keyframes: {
         slideUp: {
           from: { transform: 'translateY(10px)', opacity: 0 },
           to: { transform: 'translateY(0)', opacity: 1 },

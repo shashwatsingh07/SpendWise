@@ -55,9 +55,26 @@ continue. Each chunk = one commit. Run `npm run build` before committing.
 
 ## ✅ Overhaul complete — all 11 chunks done
 
-Optional future polish (not blocking): skeleton shimmer loaders, toast system,
-import-success confetti, expense heatmap. The `.shimmer` utility already exists
-if you want to add skeletons later.
+### Polish pass (done)
+- [x] **Toast system** — `ToastProvider` + `useToast()` (`src/components/Toast.tsx`),
+      wired into transaction add/update/delete, budget & goal save/delete,
+      settings save, and import success/undo.
+- [x] **Skeleton shimmer loaders** — reusable `Skeleton`
+      (`src/components/Skeleton.tsx`); AI assistant "thinking" bubble now shows
+      shimmer lines instead of a spinner.
+- [x] **Import-success confetti** — `Confetti` (`src/components/Confetti.tsx`)
+      bursts on the import "done" stage; skipped under reduced-motion.
+- [x] **Expense heatmap calendar** — GitHub-style daily-spend grid
+      (`src/components/ExpenseHeatmap.tsx`) on the Analytics page.
+
+### Bugs fixed during the polish pass
+- `tailwind.config.js` had **two `keyframes` objects** in `extend`; the second
+  silently overrode the first, dropping `shimmer`/`float`/`pulseGlow`. Merged
+  into one — the `.shimmer` utility now actually animates.
+- The dark-mode aurora blobs use raw `animation: float` but Tailwind
+  tree-shook the `float` keyframe (no `animate-float` class is used anywhere),
+  so the background was static. `@keyframes float` is now defined directly in
+  `src/index.css`.
 
 ---
 

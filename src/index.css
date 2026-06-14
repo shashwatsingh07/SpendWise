@@ -123,6 +123,14 @@
 
 /* ---------- Animations (Tailwind + CSS only, no libraries) ---------- */
 
+/* Aurora drift — used by the dark-mode background blobs above. Defined here
+   (not via Tailwind's animate-float) because the blobs use raw `animation: float`,
+   and Tailwind tree-shakes keyframes whose utility class is never referenced. */
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(2%, -3%) scale(1.05); }
+}
+
 /* Page / route transition: fade + slide up */
 .page-enter {
   animation: pageEnter 0.4s ease-out both;

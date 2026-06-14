@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Save, Eye, EyeOff, Moon, Sun } from 'lucide-react'
 import { useStore } from '../store/useStore'
+import { useToast } from '../components/Toast'
 import { staggerContainer, fadeUp } from '../lib/motion'
 
 const CURRENCIES = [
@@ -14,6 +15,7 @@ const CURRENCIES = [
 
 export default function Settings() {
   const { settings, updateSettings } = useStore()
+  const { toast } = useToast()
   const [name, setName] = useState(settings.name)
   const [currency, setCurrency] = useState(settings.currency)
   const [monthlyIncome, setMonthlyIncome] = useState(settings.monthlyIncome.toString())
@@ -25,6 +27,7 @@ export default function Settings() {
     const cur = CURRENCIES.find(c => c.code === currency) ?? CURRENCIES[0]
     updateSettings({ name, currency, currencySymbol: cur.symbol, monthlyIncome: parseFloat(monthlyIncome) || 0, aiApiKey: apiKey })
     setSaved(true)
+    toast('Settings saved')
     setTimeout(() => setSaved(false), 2000)
   }
 

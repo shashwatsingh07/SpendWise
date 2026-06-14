@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Filter, Trash2, Edit2, Plus, Tag, SlidersHorizontal } from 'lucide-react'
 import { useStore } from '../store/useStore'
+import { useToast } from '../components/Toast'
 import { getCategoryById, DEFAULT_CATEGORIES } from '../data/categories'
 import { formatCurrencyFull, formatDate, getMoodEmoji } from '../lib/utils'
 import { TransactionModal } from '../components/TransactionModal'
@@ -11,6 +12,7 @@ import { staggerContainer, fadeUp, EASE } from '../lib/motion'
 
 export default function Transactions() {
   const { transactions, deleteTransaction, settings } = useStore()
+  const { toast } = useToast()
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState<'all' | 'expense' | 'income'>('all')
   const [categoryFilter, setCategoryFilter] = useState('all')
@@ -193,7 +195,7 @@ export default function Transactions() {
                     {deleteConfirm === tx.id ? (
                       <div className="flex items-center gap-1">
                         <button
-                          onClick={() => { deleteTransaction(tx.id); setDeleteConfirm(null) }}
+                          onClick={() => { deleteTransaction(tx.id); setDeleteConfirm(null); toast('Transaction deleted', 'info') }}
                           className="px-2 py-1 bg-rose-500 text-white rounded-lg text-xs font-medium"
                         >
                           Delete

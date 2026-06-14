@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Send, Sparkles, Bot, User, Loader2, TrendingDown, AlertCircle, Lightbulb } from 'lucide-react'
+import { Send, Sparkles, Bot, User, TrendingDown, AlertCircle, Lightbulb } from 'lucide-react'
 import { useStore } from '../store/useStore'
+import { Skeleton } from '../components/Skeleton'
 import { getCategoryById } from '../data/categories'
 import { formatCurrencyFull } from '../lib/utils'
 
@@ -178,9 +179,10 @@ This month (${now.toLocaleString('default', { month: 'long', year: 'numeric' })}
             )}
             <div className={`max-w-sm rounded-2xl px-4 py-3 text-sm ${msg.role === 'user' ? 'bg-gradient-to-br from-violet-600 to-indigo-600 text-white rounded-br-sm shadow-lg shadow-violet-500/20' : 'bg-white dark:bg-white/[0.05] border border-slate-100 dark:border-white/10 text-slate-700 dark:text-slate-200 rounded-bl-sm shadow-sm'}`}>
               {msg.loading ? (
-                <div className="flex items-center gap-2 text-slate-400">
-                  <Loader2 size={14} className="animate-spin" />
-                  <span>Analyzing your finances...</span>
+                <div className="flex flex-col gap-2 py-0.5 w-44">
+                  <Skeleton className="h-3 w-full" />
+                  <Skeleton className="h-3 w-5/6" />
+                  <Skeleton className="h-3 w-3/5" />
                 </div>
               ) : (
                 <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { X, Sparkles, Loader2 } from 'lucide-react'
 import { useStore } from '../store/useStore'
+import { useToast } from './Toast'
 import { DEFAULT_CATEGORIES } from '../data/categories'
 import { Transaction, Mood } from '../types'
 import { cn } from '../lib/utils'
@@ -20,6 +21,7 @@ const MOODS: { value: Mood; emoji: string; label: string }[] = [
 
 export function TransactionModal({ onClose, transaction }: Props) {
   const { addTransaction, updateTransaction, settings } = useStore()
+  const { toast } = useToast()
 
   const [type, setType] = useState<'expense' | 'income'>(transaction?.type ?? 'expense')
   const [amount, setAmount] = useState(transaction?.amount?.toString() ?? '')
@@ -75,8 +77,10 @@ export function TransactionModal({ onClose, transaction }: Props) {
     }
     if (transaction) {
       updateTransaction(transaction.id, data)
+      toast('Transaction updated')
     } else {
       addTransaction(data)
+      toast('Transaction added')
     }
     onClose()
   }

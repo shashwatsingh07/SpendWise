@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Layout } from './components/Layout'
+import { ToastProvider } from './components/Toast'
 import { useStore } from './store/useStore'
 import Dashboard from './pages/Dashboard'
 import Transactions from './pages/Transactions'
@@ -22,8 +23,9 @@ function useThemeClass() {
 export default function App() {
   useThemeClass()
   return (
-    <BrowserRouter>
-      <Routes>
+    <ToastProvider>
+      <BrowserRouter>
+        <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Dashboard />} />
           <Route path="transactions" element={<Transactions />} />
@@ -32,9 +34,10 @@ export default function App() {
           <Route path="goals" element={<Goals />} />
           <Route path="ai" element={<AIAssistant />} />
           <Route path="import" element={<Import />} />
-          <Route path="settings" element={<Settings />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+            <Route path="settings" element={<Settings />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </ToastProvider>
   )
 }

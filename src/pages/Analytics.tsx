@@ -4,6 +4,7 @@ import { useStore } from '../store/useStore'
 import { getCategoryById } from '../data/categories'
 import { formatCurrencyFull, formatCurrency, getLast6Months } from '../lib/utils'
 import { GlassTooltip } from '../components/ChartTooltip'
+import { ExpenseHeatmap } from '../components/ExpenseHeatmap'
 import { staggerContainer, scaleIn } from '../lib/motion'
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
@@ -187,6 +188,13 @@ export default function Analytics() {
             </>
           )}
         </motion.div>
+      </motion.div>
+
+      {/* Expense heatmap calendar */}
+      <motion.div variants={scaleIn} initial="hidden" animate="show" className="card card-hover p-5">
+        <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-1">Spending Heatmap</h2>
+        <p className="text-xs text-slate-400 mb-4">Daily expense intensity over the last few months</p>
+        <ExpenseHeatmap />
       </motion.div>
 
       {/* Savings trend */}

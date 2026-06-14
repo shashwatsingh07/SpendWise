@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Plus, Trash2, Edit2, Target } from 'lucide-react'
 import { useStore } from '../store/useStore'
+import { useToast } from '../components/Toast'
 import { formatCurrencyFull, formatDate } from '../lib/utils'
 import { ProgressBar } from '../components/ProgressBar'
 import { staggerContainer, fadeUp, scaleIn } from '../lib/motion'
@@ -12,6 +13,7 @@ const GOAL_COLORS = ['#3b82f6', '#f97316', '#22c55e', '#a855f7', '#ef4444', '#ea
 
 export default function Goals() {
   const { goals, addGoal, updateGoal, deleteGoal, settings } = useStore()
+  const { toast } = useToast()
   const [showForm, setShowForm] = useState(false)
   const [editGoal, setEditGoal] = useState<SavingsGoal | null>(null)
   const sym = settings.currencySymbol
@@ -63,7 +65,7 @@ export default function Goals() {
                     <button onClick={() => { setEditGoal(goal); setShowForm(true) }} className="p-1.5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg text-slate-400">
                       <Edit2 size={13} />
                     </button>
-                    <button onClick={() => deleteGoal(goal.id)} className="p-1.5 hover:bg-rose-50 dark:hover:bg-rose-500/15 rounded-lg text-slate-400 hover:text-rose-400">
+                    <button onClick={() => { deleteGoal(goal.id); toast('Goal removed', 'info') }} className="p-1.5 hover:bg-rose-50 dark:hover:bg-rose-500/15 rounded-lg text-slate-400 hover:text-rose-400">
                       <Trash2 size={13} />
                     </button>
                   </div>
@@ -102,8 +104,8 @@ export default function Goals() {
         <GoalForm
           goal={editGoal}
           onSave={(data) => {
-            if (editGoal) updateGoal(editGoal.id, data)
-            else addGoal(data)
+            if (editGoal) { updateGoal(editGoal.id, data); toast('Goal updated') }
+            else { addGoal(data); toast('Goal created 🎯') }
             setShowForm(false)
           }}
           onClose={() => setShowForm(false)}

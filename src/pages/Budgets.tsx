@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Plus, Trash2, Edit2, AlertCircle } from 'lucide-react'
 import { useStore } from '../store/useStore'
+import { useToast } from '../components/Toast'
 import { getCategoryById, DEFAULT_CATEGORIES } from '../data/categories'
 import { formatCurrencyFull, getProgressGradient } from '../lib/utils'
 import { ProgressBar } from '../components/ProgressBar'
@@ -10,6 +11,7 @@ import { Budget } from '../types'
 
 export default function Budgets() {
   const { budgets, addBudget, updateBudget, deleteBudget, getCategorySpend, settings } = useStore()
+  const { toast } = useToast()
   const [showForm, setShowForm] = useState(false)
   const [editBudget, setEditBudget] = useState<Budget | null>(null)
 
@@ -80,7 +82,7 @@ export default function Budgets() {
                   <button onClick={() => { setEditBudget(b); setShowForm(true) }} className="p-1.5 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg text-slate-400">
                     <Edit2 size={13} />
                   </button>
-                  <button onClick={() => deleteBudget(b.id)} className="p-1.5 hover:bg-rose-50 dark:hover:bg-rose-500/15 rounded-lg text-slate-400 hover:text-rose-400">
+                  <button onClick={() => { deleteBudget(b.id); toast('Budget removed', 'info') }} className="p-1.5 hover:bg-rose-50 dark:hover:bg-rose-500/15 rounded-lg text-slate-400 hover:text-rose-400">
                     <Trash2 size={13} />
                   </button>
                 </div>
@@ -115,8 +117,8 @@ export default function Budgets() {
         <BudgetForm
           budget={editBudget}
           onSave={(data) => {
-            if (editBudget) updateBudget(editBudget.id, data)
-            else addBudget(data)
+            if (editBudget) { updateBudget(editBudget.id, data); toast('Budget updated') }
+            else { addBudget(data); toast('Budget created') }
             setShowForm(false)
           }}
           onClose={() => setShowForm(false)}

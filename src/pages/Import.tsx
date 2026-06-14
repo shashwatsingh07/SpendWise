@@ -2,6 +2,8 @@ import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { UploadCloud, FileText, Loader2, Sparkles, CheckCircle2, AlertCircle, ClipboardPaste, Undo2 } from 'lucide-react'
 import { useStore } from '../store/useStore'
+import { useToast } from '../components/Toast'
+import { Confetti } from '../components/Confetti'
 import { readFileAsText } from '../lib/fileReader'
 import { parseStatement } from '../lib/aiParser'
 import { rememberBatch } from '../lib/merchantMemory'
@@ -12,6 +14,7 @@ type Stage = 'upload' | 'parsing' | 'preview' | 'done'
 
 export default function Import() {
   const { settings, bulkAddTransactions, isDuplicate, undoLastImport } = useStore()
+  const { toast } = useToast()
   const [stage, setStage] = useState<Stage>('upload')
   const [rows, setRows] = useState<ParsedTransaction[]>([])
   const [usedAI, setUsedAI] = useState(false)
@@ -84,6 +87,7 @@ export default function Import() {
     )
     setImportedCount(count)
     setStage('done')
+    toast(`${count} transaction${count === 1 ? '' : 's'} imported`)
   }
 
   const reset = () => {
@@ -98,6 +102,7 @@ export default function Import() {
   const undo = () => {
     undoLastImport()
     setUndone(true)
+    toast('Import undone', 'info')
   }
 
   return (
@@ -226,6 +231,7 @@ export default function Import() {
         {/* Done stage */}
         {stage === 'done' && !undone && (
           <motion.div key="done" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="card p-12 text-center">
+            <Confetti />
             <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', stiffness: 260, damping: 16, delay: 0.1 }}>
               <CheckCircle2 size={40} className="mx-auto text-emerald-500 mb-4" />
             </motion.div>
