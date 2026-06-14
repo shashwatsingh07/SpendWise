@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Filter, Trash2, Edit2, Plus, Tag, SlidersHorizontal } from 'lucide-react'
+import { Search, Filter, Trash2, Edit2, Plus, Tag, SlidersHorizontal, X } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { useToast } from '../components/Toast'
 import { getCategoryById, DEFAULT_CATEGORIES } from '../data/categories'
@@ -14,6 +15,12 @@ import { staggerContainer, fadeUp, EASE } from '../lib/motion'
 export default function Transactions() {
   const { transactions, deleteTransaction, settings } = useStore()
   const { toast } = useToast()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const tagFilter = searchParams.get('tag') ?? ''
+  const setTagFilter = (tag: string) => {
+    if (tag) setSearchParams({ tag })
+    else setSearchParams({})
+  }
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState<'all' | 'expense' | 'income'>('all')
   const [categoryFilter, setCategoryFilter] = useState('all')
@@ -27,6 +34,7 @@ export default function Transactions() {
       .filter(t => {
         if (typeFilter !== 'all' && t.type !== typeFilter) return false
         if (categoryFilter !== 'all' && t.category !== categoryFilter) return false
+        if (tagFilter && !t.tags.includes(tagFilter)) return false
         if (search) {
           const q = search.toLowerCase()
           return (
@@ -42,7 +50,7 @@ export default function Transactions() {
         if (sortBy === 'date') return new Date(b.date).getTime() - new Date(a.date).getTime()
         return b.amount - a.amount
       })
-  }, [transactions, search, typeFilter, categoryFilter, sortBy])
+  }, [transactions, search, typeFilter, categoryFilter, sortBy, tagFilter])
 
   const totalFiltered = filtered.reduce((sum, t) => {
     const base = convertCurrency(t.amount, t.currency, settings.currency)
@@ -108,6 +116,19 @@ export default function Transactions() {
           </div>
         </div>
 
+        {/* Active tag filter */}
+        {tagFilter && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-400">Filtered by tag:</span>
+            <button
+              onClick={() => setTagFilter('')}
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-violet-700 dark:text-violet-300 bg-violet-100 dark:bg-violet-500/20 px-2.5 py-1 rounded-full hover:bg-violet-200 dark:hover:bg-violet-500/30 transition-colors"
+            >
+              <Tag size={11} /> {tagFilter.replace(/^#/, '')} <X size={12} />
+            </button>
+          </div>
+        )}
+
         {/* Category chips */}
         <div className="flex gap-1.5 flex-wrap">
           <button
@@ -169,9 +190,13 @@ export default function Transactions() {
                         <span className="text-xs bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300 px-1.5 py-0.5 rounded font-medium">Tax</span>
                       )}
                       {tx.tags.map(tag => (
-                        <span key={tag} className="text-xs text-slate-400 flex items-center gap-0.5">
+                        <button
+                          key={tag}
+                          onClick={() => setTagFilter(tag)}
+                          className="text-xs text-slate-400 hover:text-violet-500 flex items-center gap-0.5 transition-colors"
+                        >
                           <Tag size={10} />{tag}
-                        </span>
+                        </button>
                       ))}
                     </div>
                     <p className="text-xs text-slate-400 mt-0.5">

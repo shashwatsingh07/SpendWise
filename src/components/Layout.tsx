@@ -1,5 +1,5 @@
 import { NavLink, useOutlet, useLocation } from 'react-router-dom'
-import { LayoutDashboard, ArrowLeftRight, PieChart, Target, Wallet, Settings, Sparkles, Plus, UploadCloud, Repeat, Landmark } from 'lucide-react'
+import { LayoutDashboard, ArrowLeftRight, PieChart, Target, Wallet, Settings, Sparkles, Plus, UploadCloud, Repeat, Landmark, Tag } from 'lucide-react'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TransactionModal } from './TransactionModal'
@@ -12,6 +12,7 @@ const nav = [
   { to: '/', icon: LayoutDashboard, label: 'Dashboard' },
   { to: '/transactions', icon: ArrowLeftRight, label: 'Transactions' },
   { to: '/analytics', icon: PieChart, label: 'Analytics' },
+  { to: '/tags', icon: Tag, label: 'Tags' },
   { to: '/budgets', icon: Wallet, label: 'Budgets' },
   { to: '/goals', icon: Target, label: 'Goals' },
   { to: '/recurring', icon: Repeat, label: 'Recurring' },

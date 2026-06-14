@@ -18,8 +18,9 @@
       liabilities) + `/net-worth` page: animated net-worth total, asset/liability
       ratio bar, totals, per-column add/edit/delete with kind-aware form.
       (`src/data/accounts.ts`, `src/pages/NetWorth.tsx`, store, nav, route)
-- [ ] **3. Tags** — tag overview + filter UX (tags already stored on
-      transactions); per-tag totals on a tag detail / Analytics surface.
+- [x] **3. Tags** — `/tags` overview page (per-tag base-converted totals,
+      counts, income, share bar) linking into Transactions; Transactions now
+      honors a `?tag=` param with a clearable chip + clickable row tag chips.
 - [x] **4. Multi-Currency** — `src/data/currencies.ts` static-rate table +
       `convertCurrency`. Per-transaction currency selector in the modal; every
       aggregation (store helpers, Dashboard, Analytics, Recurring, heatmap, AI
