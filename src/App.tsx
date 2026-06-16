@@ -12,6 +12,7 @@ import Recurring from './pages/Recurring'
 import NetWorth from './pages/NetWorth'
 import Tags from './pages/Tags'
 import Splits from './pages/Splits'
+import Tax from './pages/Tax'
 import AIAssistant from './pages/AIAssistant'
 import Import from './pages/Import'
 import Settings from './pages/Settings'
@@ -40,6 +41,7 @@ export default function App() {
             <Route path="net-worth" element={<NetWorth />} />
             <Route path="tags" element={<Tags />} />
             <Route path="splits" element={<Splits />} />
+            <Route path="tax" element={<Tax />} />
             <Route path="ai" element={<AIAssistant />} />
             <Route path="import" element={<Import />} />
             <Route path="settings" element={<Settings />} />

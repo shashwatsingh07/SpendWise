@@ -48,6 +48,7 @@ SpendWise is a privacy-first expense tracker that works the way Indian users act
 - **Net Worth** — assets − liabilities with an animated total and per-account breakdown
 - **Tags** — per-tag spend totals that drill into filtered transactions
 - **Splits** — split any expense with people, track who owes you, and settle up
+- **Tax** — yearly summary of tax-deductible expenses, by category and itemised
 - **AI Assistant** — ask questions about your spending (requires Claude API key)
 - **Multi-currency** — log transactions in any of 8 currencies; all totals convert to your base currency
 - **Premium dark-first UI** — full framer-motion polish, toasts, skeleton loaders, and import confetti
@@ -124,6 +125,7 @@ src/
 │   ├── NetWorth.tsx         # Assets − liabilities tracker
 │   ├── Tags.tsx             # Per-tag spend overview
 │   ├── Splits.tsx           # Split expenses + settle-up
+│   ├── Tax.tsx              # Tax-deductible expense summary
 │   ├── AIAssistant.tsx
 │   └── Settings.tsx
 ├── store/
