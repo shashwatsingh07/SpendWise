@@ -213,3 +213,52 @@ A full-featured, AI-powered expense tracker that goes far beyond "add expense, s
 → **Project setup + Dashboard + Transaction CRUD** (Phase 1 foundation)
 
 This gives us a working app immediately, then we layer AI on top.
+
+---
+
+## Deployment & Distribution Roadmap (planned — not started)
+
+> Agreed build order for getting SpendWise live + multi-device. Each step lists
+> what the agent codes vs. what the owner (Shashwat) must provide. **Status: planned.**
+
+### Step 1 — Web deploy (Vercel) ⏳
+Static Vite SPA → live shareable URL, free. Do this first.
+- Build: `vercel.json` / project config, confirm `npm run build` output, env wiring
+- **Owner provides:** Vercel (or Netlify) account connected to the GitHub repo
+
+### Step 2 — PWA (installable + offline) ⏳
+Make the web app installable on phones/desktop without any app store.
+- Build: web manifest, icons, service worker (e.g. `vite-plugin-pwa`), offline caching
+- **Owner provides:** nothing (app icon art optional)
+
+### Step 3 — Auth + cloud sync (multi-device backup) ⏳
+Backend so data backs up and syncs across devices. Recommended: **Supabase**
+(Postgres + auth + row-level security + realtime; matches the Tech Stack table above).
+- Build: DB schema (transactions, budgets, goals, accounts, settings) with row-level
+  security; login/signup UI; sync layer over the Zustand store with offline fallback;
+  one-time migration of existing localStorage data into the cloud on first login
+- **Owner provides:** Supabase account + project; Project URL + anon key (→ `.env`);
+  choice of auth method (email/password, magic link, or Google); if Google sign-in,
+  Google Cloud OAuth credentials
+- **Decision:** keep "users bring their own Claude API key" (free for owner) vs. a
+  funded shared key via a backend proxy (owner pays per use)
+
+### Step 4 — Android app ⏳
+Capacitor is configured but **not installed** and there is no `android/` project yet.
+- Build: `npm i @capacitor/*`, `npx cap add android`, SMS plugin wiring, build scripts
+- **Owner provides:** Android Studio + Android SDK on the local machine
+- **Decision — sideload vs Play Store:**
+  - *Sideload (personal):* nothing extra; SMS auto-import keeps working
+  - *Play Store:* $25 one-time dev account, privacy policy, store assets (icon,
+    screenshots, description), and **rework/remove SMS auto-import** (Google restricts
+    `READ_SMS`) — CSV/PDF/manual import remains. See [ANDROID.md](ANDROID.md).
+
+### Open product decisions (set these before Step 3)
+1. Personal single-user, or public multi-user product?
+2. Local-only, or cloud sync? (cloud = Step 3)
+3. AI key: bring-your-own vs. funded proxy?
+4. Android: sideload or Play Store? (decides the SMS feature's fate)
+
+> Feature phases still open after deployment work: **Phase 3 (AI deepening)** and
+> **Phase 4 (differentiators)** from the breakdown above. UI overhaul + Phase 2
+> (smart features) are complete — see `UI_OVERHAUL.md` and `PHASE2.md`.
