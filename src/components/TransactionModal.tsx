@@ -6,6 +6,7 @@ import { useToast } from './Toast'
 import { DEFAULT_CATEGORIES } from '../data/categories'
 import { CURRENCIES, currencySymbol } from '../data/currencies'
 import { Transaction, Mood } from '../types'
+import { parseQuickAdd } from '../lib/nlParser'
 import { cn } from '../lib/utils'
 
 interface Props {
@@ -48,16 +49,25 @@ export function TransactionModal({ onClose, transaction }: Props) {
   const handleNLParse = async () => {
     if (!nlInput.trim()) return
     setAiLoading(true)
-    // Demo: simple regex parse for now; replace with Claude API call
-    const amtMatch = nlInput.match(/(\d+(?:\.\d+)?)/)?.[1]
-    if (amtMatch) setAmount(amtMatch)
-    // Simple keyword matching for category
-    const lower = nlInput.toLowerCase()
-    if (lower.includes('food') || lower.includes('swiggy') || lower.includes('zomato') || lower.includes('lunch') || lower.includes('dinner') || lower.includes('coffee')) setCategory('food')
-    else if (lower.includes('uber') || lower.includes('ola') || lower.includes('cab') || lower.includes('petrol')) setCategory('transport')
-    else if (lower.includes('netflix') || lower.includes('spotify') || lower.includes('subscription')) setCategory('subscriptions')
-    else if (lower.includes('movie') || lower.includes('game')) setCategory('entertainment')
-    if (lower.includes('salary') || lower.includes('income')) setType('income')
+    try {
+      const { parsed, usedAI } = await parseQuickAdd(nlInput, {
+        apiKey: settings.aiApiKey || undefined,
+        baseCurrency: settings.currency,
+      })
+      if (parsed.type) setType(parsed.type)
+      if (parsed.amount) setAmount(String(parsed.amount))
+      if (parsed.currency) setCurrency(parsed.currency)
+      if (parsed.category) setCategory(parsed.category)
+      if (parsed.merchant) setMerchant(parsed.merchant)
+      if (parsed.date) setDate(parsed.date.split('T')[0])
+      if (parsed.amount) {
+        toast(usedAI ? 'Parsed with AI' : 'Parsed — review & save', 'info')
+      } else {
+        toast("Couldn't read an amount — type it in", 'error')
+      }
+    } catch {
+      toast('Could not parse that', 'error')
+    }
     setAiLoading(false)
     setNlInput('')
   }

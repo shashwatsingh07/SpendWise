@@ -49,12 +49,13 @@ SpendWise is a privacy-first expense tracker that works the way Indian users act
 - **Tags** — per-tag spend totals that drill into filtered transactions
 - **Splits** — split any expense with people, track who owes you, and settle up
 - **Tax** — yearly summary of tax-deductible expenses, by category and itemised
+- **Insights** — financial health score (0–100), month-end forecast with overspend alerts, anomaly detection, 50/30/20 budget recommendations, and a what-if savings simulator — all computed offline, with an optional AI narrative
 - **AI Assistant** — ask questions about your spending (requires Claude API key)
+- **Natural-language quick-add** — type "spent 1.2k on uber yesterday" and the transaction form fills itself
 - **Multi-currency** — log transactions in any of 8 currencies; all totals convert to your base currency
 - **Premium dark-first UI** — full framer-motion polish, toasts, skeleton loaders, and import confetti
 
 ### 🔜 Coming Soon
-- **AI deepening** — natural-language expense entry, smart auto-categorization, anomaly detection, financial health score
 - **Differentiators** — carbon footprint, gamification/streaks, wealth projection, AI PDF reports
 - **Live bank feed** via Setu / Finvu Account Aggregator (RBI-licensed) + receipt OCR
 - **PWA** — installable, offline-first; WhatsApp bot; tax slab estimator

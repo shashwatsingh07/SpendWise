@@ -7,6 +7,7 @@ import { getCategoryById } from '../data/categories'
 import { currencySymbol, convertCurrency } from '../data/currencies'
 import { upcomingBills } from '../lib/recurring'
 import { formatCurrency, formatCurrencyFull, formatDateShort, getLast6Months, getProgressGradient } from '../lib/utils'
+import { computeHealthScore, computeInsights } from '../lib/insights'
 import { TransactionModal } from '../components/TransactionModal'
 import { GlassTooltip } from '../components/ChartTooltip'
 import { AnimatedNumber } from '../components/AnimatedNumber'
@@ -51,6 +52,11 @@ export default function Dashboard() {
   // Bills due within the next 3 days (actionable nudge)
   const dueSoon = upcomingBills(transactions, 3)
   const dueSoonTotal = dueSoon.reduce((s, b) => s + convertCurrency(b.tx.amount, b.tx.currency, settings.currency), 0)
+
+  // Phase 3 — financial health + top computed insight
+  const health = computeHealthScore(transactions, budgets, settings.currency)
+  const topInsight = computeInsights(transactions, settings.currency)[0]
+  const healthColor = health.score >= 80 ? 'text-emerald-500' : health.score >= 55 ? 'text-amber-500' : 'text-rose-500'
 
   return (
     <motion.div
@@ -243,22 +249,26 @@ export default function Dashboard() {
         </motion.div>
       </motion.div>
 
-      {/* AI Insight Banner */}
-      <motion.div variants={fadeUp} className="card card-hover p-4 bg-gradient-to-r from-violet-500/10 to-indigo-500/10 border-violet-400/20">
-        <div className="flex items-start gap-3">
+      {/* AI Insight Banner — links into the full Insights page */}
+      <motion.div variants={fadeUp}>
+        <Link to="/insights" className="card card-hover p-4 bg-gradient-to-r from-violet-500/10 to-indigo-500/10 border-violet-400/20 flex items-center gap-3 group">
           <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-glow">
             <Sparkles size={16} className="text-white" />
           </div>
-          <div>
-            <p className="text-sm font-medium text-slate-800 dark:text-slate-100">AI Insight</p>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mt-0.5">
-              {totalExpenses > totalIncome
-                ? `⚠️ You've overspent by ${formatCurrencyFull(totalExpenses - totalIncome, settings.currencySymbol)} this month. Your Food spending is highest — consider cooking at home more.`
-                : `✨ Great job! You've saved ${formatCurrencyFull(balance, settings.currencySymbol)} (${savingsRate}%) this month. You're on track for your ${topGoals[0]?.name ?? 'savings'} goal!`
-              }
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-slate-800 dark:text-slate-100">
+              {topInsight ? `${topInsight.emoji} ${topInsight.title}` : 'AI Insight'}
+            </p>
+            <p className="text-sm text-slate-600 dark:text-slate-300 mt-0.5 truncate">
+              {topInsight?.detail ?? 'Open Insights for your financial health, forecast & recommendations.'}
             </p>
           </div>
-        </div>
+          <div className="text-right flex-shrink-0">
+            <p className={`text-2xl font-bold tabular-nums ${healthColor}`}>{health.score}</p>
+            <p className="text-[11px] text-slate-400">Health · {health.grade}</p>
+          </div>
+          <ChevronRight size={18} className="text-violet-500 group-hover:translate-x-0.5 transition-transform flex-shrink-0" />
+        </Link>
       </motion.div>
 
       {addOpen && <TransactionModal onClose={() => setAddOpen(false)} />}

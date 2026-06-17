@@ -14,6 +14,7 @@ import Tags from './pages/Tags'
 import Splits from './pages/Splits'
 import Tax from './pages/Tax'
 import AIAssistant from './pages/AIAssistant'
+import Insights from './pages/Insights'
 import Import from './pages/Import'
 import Settings from './pages/Settings'
 
@@ -43,6 +44,7 @@ export default function App() {
             <Route path="splits" element={<Splits />} />
             <Route path="tax" element={<Tax />} />
             <Route path="ai" element={<AIAssistant />} />
+            <Route path="insights" element={<Insights />} />
             <Route path="import" element={<Import />} />
             <Route path="settings" element={<Settings />} />
           </Route>

@@ -59,16 +59,16 @@ A full-featured, AI-powered expense tracker that goes far beyond "add expense, s
 ### Phase 3 — AI Integration (Week 4)
 **The intelligence layer — what makes SpendWise unique.**
 
-- [ ] **AI Chat (Finance Assistant)** — Natural language: "How much did I spend on food last month?" → instant answer
-- [ ] **Natural Language Input** — "Spent 500 on coffee this morning" → auto-parsed into transaction
-- [ ] **Smart Auto-Categorization** — AI reads merchant/note → suggests category (learns from corrections)
-- [ ] **Spending Insights** — Weekly AI-generated analysis: "You overspent on dining by 40% vs last month"
-- [ ] **Anomaly Detection** — "This ₹12,000 Amazon charge is 3x your usual. Unusual?"
-- [ ] **Budget Recommendations** — "Based on your income, here's an optimal budget split (50/30/20 rule)"
-- [ ] **Predictive Forecasting** — "At this rate, you'll overspend on entertainment by ₹2,300 this month"
-- [ ] **What-If Scenarios** — "If you cut Swiggy by 50%, you'd save ₹1,800/month"
-- [ ] **Savings Coach** — AI suggests where to cut based on your goals
-- [ ] **Financial Health Score** — 0–100 score based on savings rate, budget adherence, debt ratio
+- [x] **AI Chat (Finance Assistant)** — Natural language: "How much did I spend on food last month?" → instant answer
+- [x] **Natural Language Input** — "Spent 500 on coffee this morning" → auto-parsed into transaction
+- [x] **Smart Auto-Categorization** — AI reads merchant/note → suggests category (learns from corrections)
+- [x] **Spending Insights** — Weekly AI-generated analysis: "You overspent on dining by 40% vs last month"
+- [x] **Anomaly Detection** — "This ₹12,000 Amazon charge is 3x your usual. Unusual?"
+- [x] **Budget Recommendations** — "Based on your income, here's an optimal budget split (50/30/20 rule)"
+- [x] **Predictive Forecasting** — "At this rate, you'll overspend on entertainment by ₹2,300 this month"
+- [x] **What-If Scenarios** — "If you cut Swiggy by 50%, you'd save ₹1,800/month"
+- [x] **Savings Coach** — AI suggests where to cut based on your goals
+- [x] **Financial Health Score** — 0–100 score based on savings rate, budget adherence, debt ratio
 
 ---
 
@@ -259,6 +259,6 @@ Capacitor is configured but **not installed** and there is no `android/` project
 3. AI key: bring-your-own vs. funded proxy?
 4. Android: sideload or Play Store? (decides the SMS feature's fate)
 
-> Feature phases still open after deployment work: **Phase 3 (AI deepening)** and
-> **Phase 4 (differentiators)** from the breakdown above. UI overhaul + Phase 2
-> (smart features) are complete — see `UI_OVERHAUL.md` and `PHASE2.md`.
+> Feature phases still open after deployment work: **Phase 4 (differentiators)**
+> from the breakdown above. UI overhaul + Phase 2 (smart features) + Phase 3 (AI
+> integration) are complete — see `UI_OVERHAUL.md`, `PHASE2.md`, and `PHASE3.md`.
