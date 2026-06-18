@@ -75,16 +75,16 @@ A full-featured, AI-powered expense tracker that goes far beyond "add expense, s
 ### Phase 4 — Unique Differentiators (Week 5)
 **Nobody else has these.**
 
-- [ ] **Mood Tracker** — Log how you felt when spending (stressed, happy, bored) → AI finds patterns ("You overspend when stressed")
-- [ ] **Carbon Footprint Score** — Each category gets an eco-score; track your spending's environmental impact
-- [ ] **Gamification** — Streaks (log 7 days in a row), badges (First Budget, Saver of the Month), XP points
-- [ ] **Leaderboard** (opt-in) — Anonymous comparison: "You spend 20% less on food than people with similar income"
-- [ ] **Wealth Projection** — "If you save ₹10k/month at 8% returns, you'll have ₹X in 10 years"
-- [ ] **AI Report Generator** — One-click PDF: monthly/yearly financial report with AI narrative
-- [ ] **Expense Heatmap Calendar** — Calendar view where each day is colored by spend intensity
-- [ ] **Smart Import** — Paste bank SMS / email statement → AI parses all transactions at once
-- [ ] **Merchant Intelligence** — App remembers your frequent merchants, auto-fills details
-- [ ] **Dark Mode + Themes** — Full dark mode + accent color picker
+- [x] **Mood Tracker** — Log how you felt when spending (stressed, happy, bored) → AI finds patterns ("You overspend when stressed")
+- [x] **Carbon Footprint Score** — Each category gets an eco-score; track your spending's environmental impact
+- [x] **Gamification** — Streaks (log 7 days in a row), badges (First Budget, Saver of the Month), XP points
+- [ ] **Leaderboard** (opt-in) — Anonymous comparison: "You spend 20% less on food than people with similar income" — *deferred: needs a backend; conflicts with the offline-first design (revisit after Step 3 cloud sync)*
+- [x] **Wealth Projection** — "If you save ₹10k/month at 8% returns, you'll have ₹X in 10 years"
+- [x] **AI Report Generator** — One-click PDF: monthly/yearly financial report with AI narrative
+- [x] **Expense Heatmap Calendar** — Calendar view where each day is colored by spend intensity
+- [x] **Smart Import** — Paste bank SMS / email statement → AI parses all transactions at once
+- [x] **Merchant Intelligence** — App remembers your frequent merchants, auto-fills details
+- [x] **Dark Mode + Themes** — Full dark mode + accent color picker
 
 ---
 

@@ -16,6 +16,10 @@ import Tax from './pages/Tax'
 import AIAssistant from './pages/AIAssistant'
 import Insights from './pages/Insights'
 import Import from './pages/Import'
+import Achievements from './pages/Achievements'
+import Carbon from './pages/Carbon'
+import Wealth from './pages/Wealth'
+import Report from './pages/Report'
 import Settings from './pages/Settings'
 
 /** Apply the `dark` class to <html> whenever the persisted setting changes. */
@@ -46,6 +50,10 @@ export default function App() {
             <Route path="ai" element={<AIAssistant />} />
             <Route path="insights" element={<Insights />} />
             <Route path="import" element={<Import />} />
+            <Route path="achievements" element={<Achievements />} />
+            <Route path="carbon" element={<Carbon />} />
+            <Route path="wealth" element={<Wealth />} />
+            <Route path="report" element={<Report />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>

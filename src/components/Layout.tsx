@@ -1,5 +1,5 @@
 import { NavLink, useOutlet, useLocation } from 'react-router-dom'
-import { LayoutDashboard, ArrowLeftRight, PieChart, Target, Wallet, Settings, Sparkles, Plus, UploadCloud, Repeat, Landmark, Tag, Users, Receipt, Lightbulb } from 'lucide-react'
+import { LayoutDashboard, ArrowLeftRight, PieChart, Target, Wallet, Settings, Sparkles, Plus, UploadCloud, Repeat, Landmark, Tag, Users, Receipt, Lightbulb, Trophy, Leaf, TrendingUp, FileText } from 'lucide-react'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { TransactionModal } from './TransactionModal'
@@ -21,6 +21,10 @@ const nav = [
   { to: '/tax', icon: Receipt, label: 'Tax' },
   { to: '/import', icon: UploadCloud, label: 'Import' },
   { to: '/insights', icon: Lightbulb, label: 'Insights' },
+  { to: '/wealth', icon: TrendingUp, label: 'Wealth' },
+  { to: '/carbon', icon: Leaf, label: 'Carbon' },
+  { to: '/achievements', icon: Trophy, label: 'Achievements' },
+  { to: '/report', icon: FileText, label: 'AI Report' },
   { to: '/ai', icon: Sparkles, label: 'AI Assistant' },
   { to: '/settings', icon: Settings, label: 'Settings' },
 ]
@@ -58,7 +62,7 @@ export function Layout() {
         </div>
 
         {/* Nav items — shared-layout active pill slides between items */}
-        <nav className="flex flex-col gap-1">
+        <nav className="flex flex-col gap-1 flex-1 overflow-y-auto -mr-1 pr-1 min-h-0">
           {nav.map(({ to, icon: Icon, label }) => (
             <NavLink key={to} to={to} end={to === '/'}>
               {({ isActive }) => (
@@ -115,7 +119,9 @@ export function Layout() {
 
       {/* Main content */}
       <main className="flex-1 overflow-y-auto">
-        <SmsImportBanner />
+        <div className="no-print">
+          <SmsImportBanner />
+        </div>
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}

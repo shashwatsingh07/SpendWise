@@ -184,3 +184,25 @@
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after { animation-duration: 0.001ms !important; }
 }
+
+/* Print — used by the AI Report Generator to export a clean PDF.
+   Everything is hidden except the report sheet; app chrome + controls drop out. */
+@media print {
+  body { background: #fff !important; }
+  aside, .no-print, .sms-import-banner { display: none !important; }
+  main { overflow: visible !important; }
+  .print-sheet {
+    box-shadow: none !important;
+    border: none !important;
+    background: #fff !important;
+    color: #0f172a !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+  .print-sheet * {
+    color: #0f172a !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  @page { margin: 16mm; }
+}
