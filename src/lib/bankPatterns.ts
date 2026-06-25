@@ -15,7 +15,7 @@ import { v4 as uuid } from 'uuid'
 import { ParsedTransaction, SmsMessage, TransactionType } from '../types'
 import { DEFAULT_CATEGORIES } from '../data/categories'
 import { guessCategory } from './merchantMemory'
-import { extractVpa, merchantFromVpa, pspFromVpa } from './upiMapper'
+import { extractVpa, merchantFromVpa, pspFromVpa, cleanPayeeName } from './upiMapper'
 
 const EXPENSE_CATS = DEFAULT_CATEGORIES.filter(c => c.type !== 'income').map(c => c.id)
 const INCOME_CATS = DEFAULT_CATEGORIES.filter(c => c.type !== 'expense').map(c => c.id)
@@ -181,7 +181,9 @@ function extractMerchant(body: string, type: TransactionType): { merchant: strin
 
   for (const c of candidates) {
     if (!c) continue
-    const m = cleanMerchant(c)
+    // Clean basic noise, then strip PSP-handle words ("okici", "ybl", …) and
+    // title-case into a readable payee. Skip the candidate if nothing remains.
+    const m = cleanPayeeName(cleanMerchant(c))
     if (m && !isJunkMerchant(m)) return { merchant: m, vpa }
   }
 

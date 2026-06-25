@@ -99,6 +99,38 @@ function titleCase(s: string): string {
     .join(' ')
 }
 
+const PSP_HANDLE_SET = new Set(Object.keys(PSP_HANDLES))
+
+/**
+ * True when a token is a PSP / sponsor-bank handle rather than part of a name —
+ * e.g. `okici`, `okicici`, `okhdfcbank`, `ptaxis`, `wahdfcbank`, `ybl`, `paytm`.
+ * These leak into beneficiary text on some banks' SMS and should be dropped.
+ */
+export function isPspHandleWord(token: string): boolean {
+  const t = token.toLowerCase()
+  if (PSP_HANDLE_SET.has(t)) return true
+  if (/^(ybl|ibl|axl|apl|yapl|rapl|fbl)$/.test(t)) return true
+  return /^(ok|pt|wa)[a-z]{2,}$/.test(t) // ok*/pt*/wa* bank handles (incl. truncations)
+}
+
+/**
+ * Clean a captured payee/beneficiary string into a readable name: drop any
+ * `@handle` suffix and PSP-handle / generic banking words, then title-case.
+ * Returns null when nothing name-like remains (caller falls back to PSP/bank).
+ */
+export function cleanPayeeName(raw: string): string | null {
+  if (!raw) return null
+  const at = raw.indexOf('@')
+  const base = at >= 0 ? raw.slice(0, at) : raw
+  const tokens = base
+    .split(/[\s._-]+/)
+    .filter(Boolean)
+    .filter(t => !isPspHandleWord(t) && !/^(upi|bank|a\/?c|ac|acct|the|to|from|via)$/i.test(t))
+  if (tokens.length === 0) return null
+  const cleaned = titleCase(tokens.join(' '))
+  return cleaned.length >= 2 ? cleaned : null
+}
+
 /**
  * Best-effort merchant name for a VPA. Order:
  *   learned mapping -> recognisable localpart -> null (caller falls back).

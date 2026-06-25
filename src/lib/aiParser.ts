@@ -31,6 +31,20 @@ function parseAsSms(text: string): ParsedTransaction[] {
   return parseSmsMessages(msgs)
 }
 
+const SMS_VERBS = /\b(debited|credited|spent|paid|sent|received|withdrawn|deposited|trf|transferred)\b/i
+
+/**
+ * Heuristic: does the pasted text read as bank/UPI SMS (sentences with a
+ * debit/credit verb) rather than a CSV/statement export? Used to route to the
+ * SMS parser first so a tabular guesser doesn't grab a ref-number as the amount.
+ */
+function looksLikeSms(text: string): boolean {
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean)
+  if (lines.length === 0) return false
+  const verbLines = lines.filter(l => SMS_VERBS.test(l)).length
+  return verbLines > 0 && verbLines >= lines.length / 2
+}
+
 // ---------- shared helpers ----------
 
 const EXPENSE_CATS = DEFAULT_CATEGORIES.filter(c => c.type !== 'income').map(c => c.id)
@@ -362,9 +376,15 @@ export async function parseStatement(
       /* fall through to heuristic */
     }
   }
-  // Tabular heuristic first (CSV / statement exports)…
+  // If it reads as bank/UPI SMS, parse it that way first — the tabular guesser
+  // would otherwise mistake a ref number for the amount.
+  if (looksLikeSms(text)) {
+    const sms = parseAsSms(text)
+    if (sms.length > 0) return { rows: sms, usedAI: false }
+  }
+  // Tabular heuristic for CSV / statement exports…
   const heuristic = parseHeuristic(text)
   if (heuristic.length > 0) return { rows: heuristic, usedAI: false }
-  // …then fall back to treating the text as bank / UPI SMS (free-form sentences).
+  // …and a final SMS attempt for anything that slipped through.
   return { rows: parseAsSms(text), usedAI: false }
 }
