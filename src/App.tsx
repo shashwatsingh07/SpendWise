@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 import { Layout } from './components/Layout'
 import { ToastProvider } from './components/Toast'
 import { useStore } from './store/useStore'
@@ -58,6 +59,7 @@ export default function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      <SpeedInsights />
     </ToastProvider>
   )
 }
