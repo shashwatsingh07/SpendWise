@@ -291,6 +291,7 @@ Clean cryptic merchant codes into readable names (e.g. "SWGY*1234" -> "Swiggy").
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
     },
     body: JSON.stringify({
       model: 'claude-haiku-4-5',

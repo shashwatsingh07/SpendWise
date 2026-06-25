@@ -45,6 +45,9 @@ interface StoreState {
   // Settings
   updateSettings: (s: Partial<AppSettings>) => void
 
+  // Wipe all financial data (keeps categories + settings) — for starting fresh with real data
+  clearAllData: () => void
+
   // Computed helpers (not persisted)
   getMonthlyExpenses: (year: number, month: number) => number
   getMonthlyIncome: (year: number, month: number) => number
@@ -157,6 +160,15 @@ export const useStore = create<StoreState>()(
 
       updateSettings: (s) =>
         set(state => ({ settings: { ...state.settings, ...s } })),
+
+      clearAllData: () =>
+        set({
+          transactions: [],
+          budgets: [],
+          goals: [],
+          accounts: [],
+          lastImportIds: [],
+        }),
 
       getMonthlyExpenses: (year, month) => {
         const { transactions, settings } = get()

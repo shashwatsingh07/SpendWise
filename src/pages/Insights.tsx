@@ -77,6 +77,7 @@ export default function Insights() {
           'Content-Type': 'application/json',
           'x-api-key': settings.aiApiKey,
           'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
         },
         body: JSON.stringify({
           model: 'claude-haiku-4-5',

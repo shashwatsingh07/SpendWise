@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Save, Eye, EyeOff, Moon, Sun } from 'lucide-react'
+import { Save, Eye, EyeOff, Moon, Sun, Trash2 } from 'lucide-react'
 import { useStore } from '../store/useStore'
 import { useToast } from '../components/Toast'
 import { CURRENCIES } from '../data/currencies'
 import { staggerContainer, fadeUp } from '../lib/motion'
 
 export default function Settings() {
-  const { settings, updateSettings } = useStore()
+  const { settings, updateSettings, clearAllData } = useStore()
   const { toast } = useToast()
   const [name, setName] = useState(settings.name)
   const [currency, setCurrency] = useState(settings.currency)
@@ -15,6 +15,14 @@ export default function Settings() {
   const [apiKey, setApiKey] = useState(settings.aiApiKey)
   const [showKey, setShowKey] = useState(false)
   const [saved, setSaved] = useState(false)
+  const [confirmClear, setConfirmClear] = useState(false)
+
+  const handleClear = () => {
+    if (!confirmClear) { setConfirmClear(true); return }
+    clearAllData()
+    setConfirmClear(false)
+    toast('All data cleared — start fresh')
+  }
 
   const handleSave = () => {
     const cur = CURRENCIES.find(c => c.code === currency) ?? CURRENCIES[0]
@@ -127,6 +135,30 @@ export default function Settings() {
         <Save size={16} />
         {saved ? 'Saved!' : 'Save Settings'}
       </motion.button>
+
+      {/* Data / danger zone */}
+      <motion.div variants={fadeUp} className="card p-6 space-y-4 border border-rose-200 dark:border-rose-500/30">
+        <div>
+          <h2 className="font-semibold text-rose-600 dark:text-rose-300">Data</h2>
+          <p className="text-xs text-slate-400 mt-0.5">
+            The app ships with sample data so you can explore it. Clear it to start tracking your own finances from scratch. This deletes all transactions, budgets, goals and accounts — it can't be undone.
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleClear}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors ${confirmClear ? 'bg-rose-600 text-white hover:bg-rose-700' : 'bg-rose-50 text-rose-600 hover:bg-rose-100 dark:bg-rose-500/10 dark:text-rose-300 dark:hover:bg-rose-500/20'}`}
+          >
+            <Trash2 size={16} />
+            {confirmClear ? 'Yes, delete everything' : 'Clear all data'}
+          </button>
+          {confirmClear && (
+            <button onClick={() => setConfirmClear(false)} className="text-sm text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">
+              Cancel
+            </button>
+          )}
+        </div>
+      </motion.div>
     </motion.div>
   )
 }
