@@ -58,7 +58,7 @@ export default function Achievements() {
       </motion.div>
 
       {/* Top stats row */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Level / XP */}
         <motion.div variants={fadeUp} className="card card-hover p-5">
           <div className="flex items-center gap-2 mb-3">
@@ -122,7 +122,7 @@ export default function Achievements() {
             No badges yet — log a transaction to earn your first one! 👣
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
             {earned.map(b => <BadgeCard key={b.id} badge={b} />)}
           </div>
         )}
@@ -134,7 +134,7 @@ export default function Achievements() {
           <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3">
             In Progress <span className="text-slate-400 font-normal">({locked.length})</span>
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
             {locked.map(b => <BadgeCard key={b.id} badge={b} />)}
           </div>
         </motion.div>

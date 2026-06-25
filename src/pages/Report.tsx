@@ -155,7 +155,7 @@ export default function Report() {
         )}
 
         {/* Key figures */}
-        <div className="grid grid-cols-4 gap-3 mb-7">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-7">
           <Figure label="Income" value={fmt(data.income)} tone="emerald" />
           <Figure label="Expenses" value={fmt(data.expenses)} tone="rose" />
           <Figure label="Net" value={fmt(data.net)} tone={data.net >= 0 ? 'emerald' : 'rose'} />
@@ -186,7 +186,7 @@ export default function Report() {
         {/* Top merchants */}
         {data.topMerchants.length > 0 && (
           <Section title="Top merchants">
-            <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5">
               {data.topMerchants.map(m => (
                 <div key={m.name} className="flex items-center justify-between text-sm">
                   <span className="text-slate-600 dark:text-slate-300 truncate">{m.name}</span>
@@ -199,7 +199,7 @@ export default function Report() {
 
         {/* Health breakdown */}
         <Section title="Financial health breakdown">
-          <div className="grid grid-cols-2 gap-x-6 gap-y-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5">
             {health.components.map(c => (
               <div key={c.label}>
                 <div className="flex items-center justify-between mb-1">

@@ -55,7 +55,7 @@ export default function Tags() {
           <p className="text-sm mt-1">Add tags like <span className="font-mono">#work</span> or <span className="font-mono">#vacation</span> to a transaction to see them here.</p>
         </motion.div>
       ) : (
-        <motion.div variants={staggerContainer} className="grid grid-cols-2 gap-4">
+        <motion.div variants={staggerContainer} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {tags.map(t => (
             <motion.div key={t.tag} variants={scaleIn}>
               <Link

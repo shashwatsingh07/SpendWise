@@ -72,7 +72,7 @@ export default function NetWorth() {
       </motion.div>
 
       {/* Totals */}
-      <motion.div variants={staggerContainer} className="grid grid-cols-2 gap-4">
+      <motion.div variants={staggerContainer} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <motion.div variants={scaleIn} className="card card-hover p-5">
           <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
             <TrendingUp size={18} /> <span className="text-sm font-medium">Total Assets</span>
@@ -90,7 +90,7 @@ export default function NetWorth() {
       </motion.div>
 
       {/* Lists */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <AccountColumn
           title="Assets"
           accounts={assetAccounts}

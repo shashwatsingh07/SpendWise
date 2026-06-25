@@ -89,7 +89,7 @@ export default function Recurring() {
       ) : (
         <>
           {/* Summary cards */}
-          <motion.div variants={staggerContainer} className="grid grid-cols-3 gap-4">
+          <motion.div variants={staggerContainer} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <StatCard
               icon={<CalendarClock size={18} />}
               label="Monthly recurring"
@@ -121,7 +121,7 @@ export default function Recurring() {
                 <h2 className="font-semibold text-slate-700 dark:text-slate-200">Upcoming bills</h2>
                 <span className="text-xs text-slate-400">next 14 days</span>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {upcoming.map(r => {
                   const cat = getCategoryById(r.tx.category)
                   const days = differenceInCalendarDays(r.next, new Date())

@@ -42,7 +42,7 @@ export default function Goals() {
           <p className="text-sm mt-1">Set a savings goal to stay motivated</p>
         </motion.div>
       ) : (
-        <motion.div variants={staggerContainer} className="grid grid-cols-2 gap-4">
+        <motion.div variants={staggerContainer} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {goals.map(goal => {
             const pct = Math.min((goal.currentAmount / goal.targetAmount) * 100, 100)
             const remaining = goal.targetAmount - goal.currentAmount
@@ -164,7 +164,7 @@ function GoalForm({ goal, onSave, onClose }: {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="label">Target Amount (₹)</label>
               <input type="number" className="input" placeholder="100000" value={target} onChange={e => setTarget(e.target.value)} />

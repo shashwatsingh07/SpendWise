@@ -77,7 +77,7 @@ export default function Dashboard() {
       </motion.div>
 
       {/* Summary Cards — gradient + count-up + stagger */}
-      <motion.div variants={staggerContainer} className="grid grid-cols-4 gap-4">
+      <motion.div variants={staggerContainer} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <SummaryCard
           label="Monthly Income"
           value={totalIncome}
@@ -133,7 +133,7 @@ export default function Dashboard() {
         </motion.div>
       )}
 
-      <motion.div variants={staggerContainer} className="grid grid-cols-3 gap-4">
+      <motion.div variants={staggerContainer} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Trend Chart */}
         <motion.div variants={fadeUp} className="col-span-2 card card-hover p-5">
           <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4">Income vs Expenses (6 months)</h2>
@@ -194,7 +194,7 @@ export default function Dashboard() {
         </motion.div>
       </motion.div>
 
-      <motion.div variants={staggerContainer} className="grid grid-cols-3 gap-4">
+      <motion.div variants={staggerContainer} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Recent Transactions */}
         <motion.div variants={fadeUp} className="col-span-2 card card-hover p-5">
           <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4">Recent Transactions</h2>

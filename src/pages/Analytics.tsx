@@ -85,7 +85,7 @@ export default function Analytics() {
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Visualize your spending patterns</p>
       </div>
 
-      <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid grid-cols-2 gap-4">
+      <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Donut: Category breakdown */}
         <motion.div variants={scaleIn} className="card card-hover p-5">
           <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4">Spending by Category (This Month)</h2>
@@ -140,7 +140,7 @@ export default function Analytics() {
         </motion.div>
       </motion.div>
 
-      <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid grid-cols-2 gap-4">
+      <motion.div variants={staggerContainer} initial="hidden" animate="show" className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Line: Daily spending */}
         <motion.div variants={scaleIn} className="card card-hover p-5">
           <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4">Daily Spending (This Month)</h2>

@@ -49,7 +49,7 @@ export default function Carbon() {
         </motion.div>
       ) : (
         <>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Eco score */}
             <motion.div variants={fadeUp} className="card card-hover p-5 flex flex-col items-center">
               <div className="flex items-center gap-2 self-start mb-3">
@@ -66,7 +66,7 @@ export default function Carbon() {
             {/* Totals */}
             <motion.div variants={fadeUp} className="col-span-2 card card-hover p-5">
               <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4">This Month</h2>
-              <div className="grid grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <div>
                   <p className="text-xs text-slate-400">Total footprint</p>
                   <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 tabular-nums">{fmtKg(report.totalKg)}</p>

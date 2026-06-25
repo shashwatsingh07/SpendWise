@@ -52,7 +52,7 @@ export default function Budgets() {
       </motion.div>
 
       {/* Budget cards */}
-      <motion.div variants={staggerContainer} className="grid grid-cols-2 gap-4">
+      <motion.div variants={staggerContainer} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {budgets.map(b => {
           const cat = getCategoryById(b.category)
           const spent = getCategorySpend(b.category, y, m)
@@ -167,7 +167,7 @@ function BudgetForm({ budget, onSave, onClose, existingCategories }: {
             <label className="label">Budget Limit (₹)</label>
             <input type="number" className="input" placeholder="5000" value={limit} onChange={e => setLimit(e.target.value)} />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="label">Period</label>
               <select className="input" value={period} onChange={e => setPeriod(e.target.value as 'monthly' | 'weekly')}>

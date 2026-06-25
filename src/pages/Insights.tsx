@@ -137,7 +137,7 @@ export default function Insights() {
         </motion.div>
       )}
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Health score */}
         <motion.div variants={fadeUp} className="card card-hover p-5 flex flex-col items-center">
           <div className="flex items-center gap-2 self-start mb-4">
@@ -210,7 +210,7 @@ export default function Insights() {
           <Lightbulb size={16} className="text-violet-500" />
           <h2 className="font-semibold text-slate-700 dark:text-slate-200">Key Insights</h2>
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {insights.map(i => (
             <div key={i.id} className={`card p-4 border ${TONE_RING[i.tone]}`}>
               <div className="flex items-start gap-3">
@@ -252,7 +252,7 @@ export default function Insights() {
         </motion.div>
       )}
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Budget recommendation 50/30/20 */}
         <motion.div variants={fadeUp} className="card card-hover p-5">
           <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-1">50 / 30 / 20 Budget</h2>

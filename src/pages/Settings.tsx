@@ -67,7 +67,7 @@ export default function Settings() {
       {/* Profile */}
       <motion.div variants={fadeUp} className="card card-hover p-6 space-y-4">
         <h2 className="font-semibold text-slate-700 dark:text-slate-200">Profile</h2>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="label">Your Name</label>
             <input className="input" value={name} onChange={e => setName(e.target.value)} placeholder="Your name" />
@@ -82,7 +82,7 @@ export default function Settings() {
       {/* Currency */}
       <motion.div variants={fadeUp} className="card card-hover p-6 space-y-4">
         <h2 className="font-semibold text-slate-700 dark:text-slate-200">Currency</h2>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
           {CURRENCIES.map(c => (
             <button
               key={c.code}

@@ -85,7 +85,7 @@ export default function Wealth() {
 
         {/* Result + chart */}
         <motion.div variants={fadeUp} className="lg:col-span-2 card card-hover p-5">
-          <div className="grid grid-cols-3 gap-3 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
             <Stat label={`In ${years} years`} value={formatCurrencyFull(Math.round(proj.finalValue), sym)} accent />
             <Stat label="You contribute" value={formatCurrencyFull(Math.round(proj.totalContributed), sym)} />
             <Stat label="Growth (returns)" value={formatCurrencyFull(Math.round(proj.totalGrowth), sym)} positive />
