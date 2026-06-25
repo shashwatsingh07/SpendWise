@@ -12,9 +12,24 @@
  */
 
 import { v4 as uuid } from 'uuid'
-import { ParsedTransaction, TransactionType } from '../types'
+import { ParsedTransaction, TransactionType, SmsMessage } from '../types'
 import { DEFAULT_CATEGORIES } from '../data/categories'
 import { guessCategory } from './merchantMemory'
+import { parseSmsMessages } from './bankPatterns'
+
+/**
+ * Treat pasted text as one-or-more bank / UPI SMS messages (one per line) and
+ * run the dedicated SMS parser. Used as a fallback when the tabular heuristic
+ * finds nothing — e.g. someone pastes a single "… debited for Rs 10 …" SMS.
+ */
+function parseAsSms(text: string): ParsedTransaction[] {
+  const msgs: SmsMessage[] = text
+    .split(/\r?\n/)
+    .map(l => l.trim())
+    .filter(Boolean)
+    .map((body, i) => ({ id: String(i), body, date: Date.now() }))
+  return parseSmsMessages(msgs)
+}
 
 // ---------- shared helpers ----------
 
@@ -347,5 +362,9 @@ export async function parseStatement(
       /* fall through to heuristic */
     }
   }
-  return { rows: parseHeuristic(text), usedAI: false }
+  // Tabular heuristic first (CSV / statement exports)…
+  const heuristic = parseHeuristic(text)
+  if (heuristic.length > 0) return { rows: heuristic, usedAI: false }
+  // …then fall back to treating the text as bank / UPI SMS (free-form sentences).
+  return { rows: parseAsSms(text), usedAI: false }
 }
