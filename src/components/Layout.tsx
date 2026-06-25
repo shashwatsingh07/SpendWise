@@ -41,9 +41,12 @@ export function Layout() {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      {/* Mobile top bar — only below lg */}
-      <header className="lg:hidden fixed top-0 inset-x-0 z-30 h-14 flex items-center gap-3 px-4
-                         bg-slate-900/95 backdrop-blur border-b border-white/10 text-slate-100 no-print">
+      {/* Mobile top bar — only below lg. Padded for notches (safe-area). */}
+      <header
+        style={{ height: 'calc(3.5rem + env(safe-area-inset-top))', paddingTop: 'env(safe-area-inset-top)' }}
+        className="lg:hidden fixed top-0 inset-x-0 z-30 flex items-center gap-3 px-4
+                   bg-slate-900/95 backdrop-blur border-b border-white/10 text-slate-100 no-print"
+      >
         <button onClick={() => setMobileOpen(true)} aria-label="Open menu" className="p-1.5 -ml-1.5 rounded-lg hover:bg-white/10">
           <Menu size={22} />
         </button>
@@ -67,7 +70,8 @@ export function Layout() {
 
       {/* Sidebar — dark glass. Static on desktop, slide-in drawer on mobile. */}
       <aside className={cn(
-        'w-64 lg:w-56 shrink-0 flex flex-col py-5 px-3 gap-1',
+        'w-64 lg:w-56 shrink-0 flex flex-col gap-1 px-3',
+        'pt-[calc(1.25rem+env(safe-area-inset-top))] pb-[calc(1.25rem+env(safe-area-inset-bottom))]',
         'bg-gradient-to-b from-slate-900 to-slate-800',
         'dark:from-slate-900/95 dark:to-slate-950/95 dark:backdrop-blur-xl',
         'backdrop-blur border-r border-white/10 text-slate-300',
@@ -158,8 +162,9 @@ export function Layout() {
         </div>
       </aside>
 
-      {/* Main content */}
-      <main className="flex-1 overflow-y-auto pt-14 lg:pt-0">
+      {/* Main content — offset for the fixed mobile bar (+ notch) and home-indicator. */}
+      <main className="flex-1 overflow-y-auto pt-[calc(3.5rem+env(safe-area-inset-top))] lg:pt-0
+                       pb-[env(safe-area-inset-bottom)] lg:pb-0">
         <div className="no-print">
           <SmsImportBanner />
         </div>

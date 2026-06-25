@@ -105,7 +105,8 @@ export function TransactionModal({ onClose, transaction }: Props) {
     <motion.div
       initial={{ opacity: 0 }} animate={{ opacity: 1 }}
       onClick={onClose}
-      className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center z-50
+                 px-4 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))]"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.94, y: 12 }} animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -169,7 +170,7 @@ export function TransactionModal({ onClose, transaction }: Props) {
           </div>
 
           {/* Amount + Date */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="label">Amount</label>
               <div className="flex gap-2">
@@ -227,7 +228,7 @@ export function TransactionModal({ onClose, transaction }: Props) {
           </div>
 
           {/* Merchant + Note */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="label">Merchant</label>
               <input className="input" placeholder="e.g. Swiggy" value={merchant} onChange={e => setMerchant(e.target.value)} />
